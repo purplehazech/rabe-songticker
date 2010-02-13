@@ -1,0 +1,21 @@
+<project name="songtickerli" default="test" 
+	description="This buildfile is responsiblle for running tests and publishing songtickerli.">
+	<property file="build.properties"/>
+
+	<!-- -->
+	<taskdef name="sync" classname="phing.tasks.ext.FileSyncTask" />
+
+	<target name="test">
+		<!-- not implemented ;) -->
+	</target>
+
+	<target name="publish">
+		<!-- takes the current checkout and uses the FileSyncTask from my portage overlay 
+		     and publishes it to a location defined in build.properties -->
+		<sync sourcedir="htdocs"
+		      destinationdir="${publish.destination}"
+		      excludefile="build.publish.exclude"
+		      listonly="true"
+		      verbose="true"/>
+	</target>
+</project>
