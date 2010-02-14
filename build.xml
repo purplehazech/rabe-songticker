@@ -9,11 +9,37 @@
 		<!-- not implemented ;) -->
 	</target>
 
-	<target name="publish">
+	<target name="stage" depends="pack-js">
+		<copy todir="work" overwrite="true">
+			<fileset dir="htdocs/">
+				<include name="*.html"/>
+				<include name="*.gif"/>
+				<include name="*.png"/>
+				<include name="*.ico"/>
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="pack-js">
+		<copy todir="work/" overwrite="true">
+			<fileset dir="htdocs/">
+				<include name="*.js"/>
+			</fileset>
+			<filterchain>
+				<filterreader classname="phing.filters.JSPackerFilter">
+					<param name="encoding" value="62"/>
+					<param name="fastDecode" value="true"/>
+				</filterreader>
+			</filterchain>
+		</copy>
+	</target>
+
+	<target name="publish" depends="stage">
 		<!-- takes the current checkout and uses the FileSyncTask from my portage overlay 
-		     and publishes it to a location defined in build.properties -->
-		<sync sourcedir="htdocs"
-		      destinationdir="${publish.destination}"
+		     to publish it to a location defined in build.properties -->
+		<sync sourcedir="work/"
+		      destinationdir="${publish.destination}htdocs/"
 		      excludefile="build.publish.exclude"
 		      listonly="true"
 		      verbose="true"/>
