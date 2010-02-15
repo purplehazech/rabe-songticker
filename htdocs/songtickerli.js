@@ -1,13 +1,13 @@
 window.onload=function() {
 	Songtickerli('rabe.ch', {});
-}
+};
 
 function onclick_popup() {
 	window.open('popup.html', 'songtickerli-popup', "width=306,height=40");
 	return false;
-}
+};
 
-if (false) }
+if (false) {
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-6913382-4']);
 _gaq.push(['_setDomainName', 'none']);

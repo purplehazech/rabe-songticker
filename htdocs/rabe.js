@@ -1,4 +1,5 @@
 var songtickerli = {};
+var _songtickerli_options;
 
 function SongTicker_Station_RaBe(options) {
  this.id = 'rabe.ch';
@@ -7,7 +8,7 @@ function SongTicker_Station_RaBe(options) {
  this.name = 'Radio RaBe 95.6 MHz';
  this.url  = 'http://www.rabe.ch';
  //this.infopopup = 'http://www.rabe.ch/songticker.html';
- this.infopopup = 'testpopup.html';
+ this.infopopup = options.baseurl+'/testpopup.html';
 
  if (typeof options.colorscheme == 'undefined') {
    options.colorscheme = 'green';
@@ -19,19 +20,19 @@ function SongTicker_Station_RaBe(options) {
    case 'orange':
    case 'green':
    default:
-     this.logo = options.baseurl+'/new/rabe_gruen.png';
+     this.logo = options.baseurl+'/rabe_gruen.png';
      this.foreground_color = '#C4E218';
      this.background_color = '#1C2734';
    break;
  }
 
  this.get_style = function() {
-   return "\
-    .rabe-songtickerli-infopopup-frame {\
-     overflow: hide;\
-    }\n\
-   ";
+   s  = ".rabe-songtickerli-infopopup-frame {\n ";
+   s += " overflow: hide; ";
+   s += "}\n ";
+   return s;
  };
+
  this.get_infopopup = function() {
    rabeframe = document.createElement('iframe');
    rabeframe.className = 'rabe-songtickerli-infopopup-frame';
@@ -44,16 +45,16 @@ function SongTicker_Platform_Songtickerli(options) {
  this.options = options;
 
  this.get_style = function() {
-   return "\
-   ";
+   return "";
  };
 
  this.get_infodiv = function() {
    div = document.createElement('div');
+   div.textContent = 'Hol dir deinen Ticker auf: ';
    link = document.createElement('a');
-   link.href = 'href://songticker.li';
+   link.href = 'http://songticker.li';
    link.target = '_parent';
-   link.textContent = 'songticker.li';
+   link.textContent = 'http://songticker.li';
    div.appendChild(link);
 
    return div;
@@ -67,7 +68,7 @@ function Songticker(station, options) {
    this.options.elementid = 'songtickerli';
  }
  if (typeof this.options.baseurl == 'undefined') {
-   this.options.baseurl = 'http://songticker.li';
+   this.options.baseurl = 'http://dev.songticker.li';
  }
  if (typeof options.platform == 'undefined') {
    options.platform = 'Songtickerli';
@@ -91,31 +92,48 @@ function Songticker(station, options) {
 
 
  this.Tick = function () {
-  if (window.XMLHttpRequest) {
-   req = new XMLHttpRequest();
-   req.onreadystatechange = function() {
-    if (req.readyState == 4) {
-     if (req.status == 200 || req.status == 304) {
-      // hide timeoutmsg if shown
-      songtickerli.Load(req.responseXML);
-     }
-    }
-   };
-   req.ontimeout = function () {
-    // show timeout msg here
-    setTimeout(function() {
-    	songtickerli.Tick();
-    }, 60000);
-   };
-   req.open('GET', this.station.path, true);
-   req.send(null);
+  try {
+   if (typeof flensed != 'undefined') {
+    flensed.flXHR.module_ready;
+   } else {
+    throw new Exception;
+   }
+  } catch(e) {
+   setTimeout(function() {
+    songtickerli.Tick();
+   }, 10);
   }
+  req = flensed.flXHR({
+   appendToId: 'songtickerli',
+   autoUpdatePlayer: false,
+   instancePooling: true
+  });
+  req.onreadystatechange = function() {
+   if (req.readyState == 4) {
+    if (req.status == 200 || req.status == 304) {
+     // hide timeoutmsg if shown
+     songtickerli.Load(req.responseXML);
+    }
+   }
+  };
+  req.onerror = function (errorreq) {
+   // show timeout msg here
+   setTimeout(function() {
+    songtickerli.Tick();
+   }, 60000);
+  };
+  req.open('GET', this.station.path);
+  req.send(null);
  };
 
  this.Load = function(xml) {
   message = this.get_span_element(xml,{tagname: 'message', classname: 'message'});
   artist  = this.get_span_element(xml,{tagname: 'artist', classname: 'artist'});
   title   = this.get_span_element(xml,{tagname: 'title', classname: 'title'});
+
+  if (title.textContent.length > 28) {
+   title.textContent = title.textContent.substr(0,28)+"...";
+  }
 
   this.ticker.innerHTML = '';
   this.ticker.appendChild(message);
@@ -133,114 +151,138 @@ function Songticker(station, options) {
   headerdiv = document.createElement('div');
   headerdiv.className = 'songtickerli-header';
 
+  flensedscript = document.createElement('script');
+  flensedscript.type = 'text/javascript';
+  flensedscript.src = this.options.baseurl+'/flensed/flXHR.js';
+  flensedscript.style.display = 'none';
+  doc.appendChild(flensedscript);
+
   tickerstyle = document.createElement('style');
-  tickerstyle.textContent = "\
-  #songtickerli {\
-   border: 1px solid #303030;\
-   background: "+this.station.background_color+";\
-   width: 223px;\
-   padding-left: 62px;\
-   padding-right: 2px;\
-   background: url("+this.station.logo+") no-repeat scroll 2px 2px "+this.station.background_color+";\
-   -moz-border-radius: 6px;\
-   -webkit-border-radius: 6px;\
-   border-radius: 6px;\
-  }\n\
-  #songtickerli .songtickerli-canvas {\
-   text-align: center;\
-   margin-left: 2px;\
-   width: 219px;\
-   height: 43px;\
-   background: url("+this.options.baseurl+"/new/bg_songticker.gif) no-repeat scroll left top;\
-   color: #E7501E;\
-   font-family: 'bitstream vera sans','lucida grande',verdana,sans-serif;\
-   font-size: 10px;\
-   padding-top: 9px;\
-   padding-left: 3px;\
-   padding-right: 6px;\
-  }\n\
-  #songtickerli .songtickerli-message {\
-   font-weight: bold;\
-   text-transform: uppercase;\
-  }\n\
-  #songtickerli .songtickerli-title {\
-   display: block;\
-   font-weight: bold;\
-   text-transform: uppercase;\
-  }\n\
-  #songtickerli .songtickerli-artist {\
-   color: #505260;\
-  }\n\
-  #songtickerli .songtickerli-header {\
-   font-size: 70%;\
-   padding: 0.25em;\
-   background-color: "+this.station.background_color+";\
-  }\n\
-  #songtickerli .songtickerli-ticker-right {\
-   right: 2px;\
-   float: right;\
-   color: #00B3E6;\
-   background-color: "+this.station.background_color+";\
-   text-align: right;\
-  }\n\
-  #songtickerli .songtickerli-ticker-right {\
-   background: transparent;\
-   padding-bottom: 10px;\
-  }\n\
-  #songtickerli .songtickerli-ticker-left {\
-   color: #00B3E6;\
-   background-color: "+this.station.background_color+";\
-   text-align: left;\
-  }\n\
-  .songtickerli-ticker-info {\
-   background: transparent;\
-   position: absolute;\
-   margin-top: 0px;\
-   width: 220px;\
-   height: 70px;\
-   display: none;\
-  }\n\
-  .songtickerli-ticker-info-overlay {\
-   background-color: "+this.station.background_color+";\
-   position: absolute;\
-   margin-top: 20px;\
-   margin-left: 1px;\
-   width: 220px;\
-   height: 50px;\
-   -moz-border-radius: 6px;\
-   -webkit-border-radius: 6px;\
-   border-radius: 6px;\
-  }\n\
-  .songtickerli-station-info {\
-   background-color: "+this.station.background_color+";\
-   color: "+this.station.foreground_color+";\
-   position: absolute;\
-   margin-top: -20px;\
-   display: none;\
-   -moz-border-radius: 6px;\
-   -webkit-border-radius: 6px;\
-   border-radius: 6px;\
-  }\n\
-  .songtickerli-station-info iframe {\
-   border: 0;\
-   overflow: hide;\
-   background: transparent;\
-  }\n\
-  #songtickerli a {\
-   color: "+this.station.foreground_color+";\
-   text-decoration: none;\
-  }\n\
-  #songtickerli a:link, #songtickerli a:visited, #songtickerli a:active {\
-   color: "+this.station.foreground_color+";\
-  }\n\
-  #songtickerli a:hover {\
-   color: "+this.station.foreground_color+";\
-   text-decoration: underline;\
-  }\n\
-  #songtickerli .clear {\
-   clear: both;\
-  }\n\
-  ";
+  tickerstyle.type = 'text/css';
+  s  = "#songtickerli {\n ";
+  s += " border: 1px solid #303030; ";
+  s += " background: "+this.station.background_color+"; ";
+  s += " width: 223px; ";
+  s += " padding-left: 62px; ";
+  s += " padding-right: 2px; ";
+  s += " background: url("+this.station.logo+") no-repeat scroll 2px 2px "+this.station.background_color+"; ";
+  s += " -moz-border-radius: 6px; ";
+  s += " -webkit-border-radius: 6px; ";
+  s += " border-radius: 6px; ";
+  s += " }\n ";
+  s += ".songtickerli-canvas {\n ";
+  s += " text-align: center; ";
+  s += " margin-left: 2px; ";
+  s += " width: 219px; ";
+  s += " height: 43px; ";
+  s += " background: url("+this.options.baseurl+"/bg_songticker.gif) no-repeat scroll left top; ";
+  s += " color: #E7501E; ";
+  s += " font-family: 'bitstream vera sans','lucida grande',verdana,sans-serif; ";
+  s += " font-size: 10px; ";
+  s += " padding-top: 10px; ";
+  s += " padding-left: 3px; ";
+  s += " padding-right: 6px; ";
+  s += " }\n ";
+  s += ".songtickerli-message {\n ";
+  s += " font-weight: bold; ";
+  s += " text-transform: uppercase; ";
+  s += " }\n ";
+  s += ".songtickerli-title {\n ";
+  s += " display: block; ";
+  s += " font-weight: bold; ";
+  s += " text-transform: uppercase; ";
+  s += " }\n ";
+  s += ".songtickerli-artist {\n ";
+  s += " color: #505260; ";
+  s += " }\n ";
+  s += ".songtickerli-header {\n ";
+  s += " font-size: 70%; ";
+  s += " padding: 0.25em; ";
+  s += " background-color: "+this.station.background_color+"; ";
+  s += " }\n ";
+  s += ".songtickerli-ticker-right {\n ";
+  s += " right: 2px; ";
+  s += " float: right; ";
+  s += " color: #00B3E6; ";
+  s += " background-color: "+this.station.background_color+"; ";
+  s += " text-align: right; ";
+  s += " }\n ";
+  s += ".songtickerli-ticker-right {\n ";
+  s += " background: transparent; ";
+  s += " padding-bottom: 10px; ";
+  s += " }\n ";
+  s += ".songtickerli-ticker-left {\n ";
+  s += " color: #00B3E6; ";
+  s += " background-color: "+this.station.background_color+"; ";
+  s += " text-align: left; ";
+  s += " }\n ";
+  s += ".songtickerli-ticker-info {\n ";
+  s += " background: transparent; ";
+  s += " position: absolute; ";
+  s += " margin-top: 0px; ";
+  s += " width: 220px; ";
+  s += " height: 70px; ";
+  s += " display: none; ";
+  s += " z-index: 6000;";
+  s += " }\n ";
+  s += ".songtickerli-ticker-info-link {\n ";
+  s += " font-weight: bold; ";
+  s += " font-size: 90%; ";
+  s += "}\n ";
+  s += ".songtickerli-ticker-info-overlay div {\n ";
+  s += " background-color: "+this.station.background_color+"; ";
+  s += " color: "+this.station.foreground_color+"; ";
+  s += "}\n ";
+  s += ".songtickerli-ticker-info-overlay {\n ";
+  s += " background-color: "+this.station.background_color+"; ";
+  s += " color: "+this.station.foreground_color+"; ";
+  s += " text-align: center; ";
+  s += " position: absolute; ";
+  s += " margin-top: 20px; ";
+  s += " margin-left: 1px; ";
+  s += " width: 220px; ";
+  s += " height: 50px; ";
+  s += " -moz-border-radius: 6px; ";
+  s += " -webkit-border-radius: 6px; ";
+  s += " border-radius: 6px; ";
+  s += " font-size: 70%; ";
+  s += " }\n ";
+  s += ".songtickerli-station-info {\n ";
+  s += " background-color: "+this.station.background_color+"; ";
+  s += " color: "+this.station.foreground_color+"; ";
+  s += " position: absolute; ";
+  s += " margin-top: -15px; ";
+  s += " display: none; ";
+  s += " -moz-border-radius: 6px; ";
+  s += " -webkit-border-radius: 6px; ";
+  s += " border-radius: 6px; ";
+  s += " }\n ";
+  s += ".songtickerli-station-info iframe {\n ";
+  s += " border: 0; ";
+  s += " overflow: hide; ";
+  s += " background: transparent; ";
+  s += " }\n ";
+  s += "#songtickerli a {\n ";
+  s += " color: "+this.station.foreground_color+"; ";
+  s += " text-decoration: none; ";
+  s += " }\n ";
+  s += "#songtickerli a:link, #songtickerli a:visited, #songtickerli a:active {\n ";
+  s += " color: "+this.station.foreground_color+"; ";
+  s += " }\n ";
+  s += "#songtickerli a:hover {\n ";
+  s += " color: "+this.station.foreground_color+"; ";
+  s += " text-decoration: underline; ";
+  s += " }\n ";
+  s += ".flXHRhideSwf {\n ";
+  s += " display:block; ";
+  s += " background: transparent; ";
+  s += " postition: absolute; ";
+  s += " left:-1px;top:0px;width:1px;height:1px; ";
+  s += " }\n ";
+  s += "#songtickerli .clear {\n ";
+  s += " clear: both; ";
+  s += " }\n ";
+  tickerstyle.textContent  = s;
   tickerstyle.textContent += this.station.get_style();
   tickerstyle.textContent += this.platform.get_style();
   doc.appendChild(tickerstyle);
@@ -267,9 +309,15 @@ function Songticker(station, options) {
   tickertext.style.float = 'right';
   tickerlink = document.createElement('a');
   tickerlink.href = 'http://songticker.li';
-  tickerlink.textContent = 'songticker.li';
-  tickerlink.onmouseover = function() {
+  tickerlink.textContent = ' i ';
+  tickerlink.className = '.songtickerli-ticker-info-link';
+  tickerlink.onclick = function() {
+   if (tickerpopup.style.display == 'none') {
     tickerpopup.style.display = 'block';
+   } else {
+    tickerpopup.style.display = 'none';
+   }
+   return false;
   };
   tickertext.appendChild(tickerlink);
   headerdiv.appendChild(tickertext);
@@ -298,7 +346,7 @@ function Songticker(station, options) {
   stationlink.textContent = this.station.name;
   stationlink.onmouseover = function() {
     stationpopup.style.display = 'block';
-    stationpopup.children[0].src = 'testpopup.html';
+    stationpopup.children[0].src = songtickerli.station.infopopup;
   };
   stationtext.appendChild(stationlink);
   headerdiv.appendChild(stationtext);
@@ -328,9 +376,17 @@ function Songticker(station, options) {
  };
 
  this.initialize_tickergui();
- this.Tick();
+ setTimeout(function() {
+  songtickerli.Tick();
+ }, 100);
 };
 
 function Songtickerli(station, options) {
   songtickerli = new Songticker(station, options);
 };
+
+if (typeof _songtickerli_options != "undefined") {
+  Songtickerli('rabe.ch', _songtickerli_options);
+} else {
+  Songtickerli('rabe.ch', {});
+}

@@ -9,7 +9,7 @@
 		<!-- not implemented ;) -->
 	</target>
 
-	<target name="stage" depends="pack-js">
+	<target name="stage" depends="pack-js,flxhr">
 		<copy todir="work" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.html"/>
@@ -17,6 +17,7 @@
 				<include name="*.png"/>
 				<include name="*.ico"/>
 				<include name="*.xml"/>
+				<include name="songtickerli.js"/>
 			</fileset>
 		</copy>
 	</target>
@@ -25,15 +26,26 @@
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.js"/>
+				<exclude name="songtickerli.js"/>
 			</fileset>
 			<filterchain>
-				<filterreader classname="phing.filters.JSPackerFilter">
-					<param name="encoding" value="62"/>
-					<param name="fastDecode" value="true"/>
-				</filterreader>
+					<filterreader classname="phing.filters.JSPackerFilter">
+						<param name="encoding" value="Numeric"/>
+						<param name="fastDecode" value="true"/>
+						<param name="specialCharacters" value="false"/>
+					</filterreader>
 			</filterchain>
 		</copy>
 	</target>
+
+	<target name="flxhr">
+		<untar file="packages/flXHR-1.0.5.tar.gz" todir="temp/"/>
+		<copy todir="work/flensed" overwrite="true">
+			<fileset dir="temp/flensed-1.0/deploy">
+				<include name="*"/>
+			</fileset>
+		</copy>
+</target>
 
 	<target name="publish" depends="stage">
 		<!-- takes the current checkout and uses the FileSyncTask from my portage overlay 
@@ -41,7 +53,13 @@
 		<sync sourcedir="work/"
 		      destinationdir="${publish.destination}htdocs/"
 		      excludefile="build.publish.exclude"
-		      listonly="true"
+		      listonly="false"
 		      verbose="true"/>
+		<chmod mode="744">
+			<fileset dir="${publish.destination}htdocs/">
+				<include name="*.*"/>
+				<include name="flensed/*.*"/>
+			</fileset>
+		</chmod>
 	</target>
 </project>
