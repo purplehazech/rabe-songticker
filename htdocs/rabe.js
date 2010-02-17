@@ -91,7 +91,7 @@ function Songticker(station, options) {
    break;
  }
  // defer startup if we where called in head
- l = document.getElementsByTagName('body').length
+ l = document.getElementsByTagName('body').length;
  if (document.getElementsByTagName('body').length != 1) {
   if (document.addEventListener) {
    document.addEventListener("DOMContentLoaded", function() {
@@ -111,7 +111,7 @@ function Songticker(station, options) {
  this.Tick = function () {
   try {
    if (typeof flensed != 'undefined') {
-    flensed.flXHR.module_ready;
+    flensed.flXHR.module_ready();
    } else {
     throw new Exception;
    }
@@ -150,11 +150,11 @@ function Songticker(station, options) {
 
  // trim12 from http://blog.stevenlevithan.com/archives/faster-trim-javascript
  this.trim = function(str) {
-  var str = str.replace(/^\s\s*/, ''),
   ws = /\s/,
   i = str.length;
-  while (ws.test(str.charAt(--i)));
+  while (ws.test(str.charAt(--i))) {
    return str.slice(0, i + 1);
+  }
  };
 
  this.scroll_text = function(text, len) {
@@ -162,16 +162,21 @@ function Songticker(station, options) {
     text._index = 0;
     text._reverse = false;
   }
-  text.textContent = this.trim(text._text.substr(text._index, len));
+  if (typeof this.trim(text._text.substr(text._index, len)) != 'undefined') {
+   text.textContent = this.trim(text._text.substr(text._index, len));
+  } else {
+   text.textContent = text._text;
+  }
   if (text._index + len >= text._text.length) {
     text._reverse = true;
   } else if (text._index <= 0) {
     text._reverse = false;
   }
-  if (text._reverse)
+  if (text._reverse) {
     text._index--;
-  else
+  } else {
     text._index++;
+  }
  };
 
  this.Load = function(xml) {
@@ -457,3 +462,5 @@ if (typeof _songtickerli_options != "undefined") {
 } else {
   Songtickerli('rabe.ch', {});
 }
+
+

@@ -29,13 +29,11 @@
 				<exclude name="songtickerli.js"/>
 			</fileset>
 			<filterchain>
-			<!--
 					<filterreader classname="phing.filters.JSPackerFilter">
 						<param name="encoding" value="Numeric"/>
 						<param name="fastDecode" value="true"/>
 						<param name="specialCharacters" value="false"/>
 					</filterreader>
-			-->
 			</filterchain>
 		</copy>
 	</target>
