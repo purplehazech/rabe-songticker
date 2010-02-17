@@ -27,16 +27,11 @@
    #songtickerli-main {
     margin-top: -1em;
     padding: 1em;
-    padding-top: 4em;
+    padding-top: 1.5em;
     background: #505260;
     height: 100%;
    }
-   h1 {
-    color: #8080a0;
-    position: absolute;
-    margin-top: -1em;
-   }
-   h2,h3 {
+   h1,h2,h3 {
     display:none;
    }
    p,pre {
@@ -97,7 +92,6 @@
     font-size: 80%;
    }
   </style>
-  <script src="rabe.js"></script>
   <script src="songtickerli.js"></script>
   <!--script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=b3d79d06-df59-4098-863b-7fe8ecdf35b7&amp;type=website&amp;buttonText=songtickerli%20verlinken&amp;style=rotate"></script-->
  </head>
@@ -107,7 +101,8 @@
   <div class="right">
    <div class="box" id="ticker-container">
     <h2>Ticker</h2>
-    <div id="songtickerli"></div><a class="popuplink" href="popup.html" target="songtickerli-popup" onclick="return onclick_popup();">^^</a>
+    <div id="songtickerli"></div><script src="rabe.js"></script>
+    <a class="popuplink" href="popup.html" target="songtickerli-popup" onclick="return onclick_popup();">^^</a>
    </div>
    <div class="box">
     <h2>Social Web</h2>
@@ -143,11 +138,6 @@
     Der Songticker ist so gestaltet das er sich einfach in 
     eine bestehende Seite integrieren lässt.
    </p>
-   <p>
-    Der Songticker befindet sich noch in Entwicklung weswegen sich hier auf 
-    songticker.li noch einiges ändern wird. Er ist darum noch nicht 
-    wirklich für den Einsatz im Internet brauchbar.
-   </p>
    <h2>Beispielcode</h2>
    <h3>Javascript</h3>
    <pre><code>
@@ -171,7 +161,7 @@ CacheMaxExpire 16
     <a href="http://rabe.ch/verein/mitgliedschaft.html">RaBe Mitglied werden</a>.
    </p>
    <h2>Copyright</h2>
-   <p>
+   <p class="hidden">
     2010 - Lucas S. Bickel - hairmare@purplehaze.ch
    </p>
   </div>

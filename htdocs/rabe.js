@@ -1,5 +1,6 @@
 var songtickerli = {};
 var _songtickerli_options;
+var flensed;
 
 function SongTicker_Station_RaBe(options) {
  this.id = 'rabe.ch';
@@ -27,9 +28,9 @@ function SongTicker_Station_RaBe(options) {
  }
 
  this.get_style = function() {
-   s  = ".rabe-songtickerli-infopopup-frame {\n ";
+   s  = ".rabe-songtickerli-infopopup-frame { ";
    s += " overflow: hide; ";
-   s += "}\n ";
+   s += "} ";
    return s;
  };
 
@@ -50,7 +51,7 @@ function SongTicker_Platform_Songtickerli(options) {
 
  this.get_infodiv = function() {
    div = document.createElement('div');
-   div.textContent = 'Hol dir deinen Ticker auf: ';
+   div.textContent = 'Hol dir den Ticker für deine Homepage auf: ';
    link = document.createElement('a');
    link.href = 'http://songticker.li';
    link.target = '_parent';
@@ -89,6 +90,22 @@ function Songticker(station, options) {
      throw Exception('unknown platform');
    break;
  }
+ // defer startup if we where called in head
+ l = document.getElementsByTagName('body').length
+ if (document.getElementsByTagName('body').length != 1) {
+  if (document.addEventListener) {
+   document.addEventListener("DOMContentLoaded", function() {
+    Songtickerli(station,options);
+   }, false);
+  return;
+  } else {
+   // better IE onload?
+   window.onload = function() {
+    Songtickerli(station,options);
+   };
+   return;
+  }
+ }
 
 
  this.Tick = function () {
@@ -104,15 +121,20 @@ function Songticker(station, options) {
    }, 10);
   }
   req = flensed.flXHR({
-   appendToId: 'songtickerli',
-   autoUpdatePlayer: false,
+   autoUpdatePlayer: true,
    instancePooling: true
   });
   req.onreadystatechange = function() {
    if (req.readyState == 4) {
     if (req.status == 200 || req.status == 304) {
      // hide timeoutmsg if shown
-     songtickerli.Load(req.responseXML);
+     if (req.responseText != songtickerli.raw_data) {
+      songtickerli.raw_data = req.responseText;
+      songtickerli.Load(req.responseXML);
+     }
+     setTimeout(function() {
+      songtickerli.Tick();
+     }, 10000);
     }
    }
   };
@@ -126,27 +148,66 @@ function Songticker(station, options) {
   req.send(null);
  };
 
+ // trim12 from http://blog.stevenlevithan.com/archives/faster-trim-javascript
+ this.trim = function(str) {
+  var str = str.replace(/^\s\s*/, ''),
+  ws = /\s/,
+  i = str.length;
+  while (ws.test(str.charAt(--i)));
+   return str.slice(0, i + 1);
+ };
+
+ this.scroll_text = function(text, len) {
+  if (typeof text._index == 'undefined') {
+    text._index = 0;
+    text._reverse = false;
+  }
+  text.textContent = this.trim(text._text.substr(text._index, len));
+  if (text._index + len >= text._text.length) {
+    text._reverse = true;
+  } else if (text._index <= 0) {
+    text._reverse = false;
+  }
+  if (text._reverse)
+    text._index--;
+  else
+    text._index++;
+ };
+
  this.Load = function(xml) {
   message = this.get_span_element(xml,{tagname: 'message', classname: 'message'});
   artist  = this.get_span_element(xml,{tagname: 'artist', classname: 'artist'});
   title   = this.get_span_element(xml,{tagname: 'title', classname: 'title'});
+  // store original for processing
+  title._text = title.textContent;
 
-  if (title.textContent.length > 28) {
-   title.textContent = title.textContent.substr(0,28)+"...";
+  maxlen = 30;
+  if (title.textContent.length > maxlen) {
+   this.titlescroll = true;
+  } else {
+   clearInterval(this.titletimeout);
+  }
+
+  if (this.titlescroll == true) {
+   songtickerli.scroll_text(title, maxlen);
+   this.titletimeout = setInterval("songtickerli.scroll_text(title, maxlen);", 600);
+   this.titlescroll = false;
   }
 
   this.ticker.innerHTML = '';
-  this.ticker.appendChild(message);
   this.ticker.appendChild(title);
+  this.ticker.appendChild(message);
   this.ticker.appendChild(artist);
-
-  setTimeout(function() {
-   songtickerli.Tick();
-  }, 10000);
  };
 
  this.initialize_tickergui = function () {
   doc = document.getElementById(this.options.elementid);
+  if (typeof doc == 'undefined' || doc == null) {
+    doc = document.createElement('div');
+    doc.id = this.options.elementid;
+    body = document.getElementsByTagName('body')[0];
+    body.appendChild(doc);
+  }
 
   headerdiv = document.createElement('div');
   headerdiv.className = 'songtickerli-header';
@@ -159,7 +220,8 @@ function Songticker(station, options) {
 
   tickerstyle = document.createElement('style');
   tickerstyle.type = 'text/css';
-  s  = "#songtickerli {\n ";
+  tickerstyle.setAttribute("type", "text/css");
+  s  = "#songtickerli { ";
   s += " border: 1px solid #303030; ";
   s += " background: "+this.station.background_color+"; ";
   s += " width: 223px; ";
@@ -169,8 +231,8 @@ function Songticker(station, options) {
   s += " -moz-border-radius: 6px; ";
   s += " -webkit-border-radius: 6px; ";
   s += " border-radius: 6px; ";
-  s += " }\n ";
-  s += ".songtickerli-canvas {\n ";
+  s += " } ";
+  s += ".songtickerli-canvas { ";
   s += " text-align: center; ";
   s += " margin-left: 2px; ";
   s += " width: 219px; ";
@@ -182,41 +244,41 @@ function Songticker(station, options) {
   s += " padding-top: 10px; ";
   s += " padding-left: 3px; ";
   s += " padding-right: 6px; ";
-  s += " }\n ";
-  s += ".songtickerli-message {\n ";
+  s += " } ";
+  s += ".songtickerli-message { ";
   s += " font-weight: bold; ";
   s += " text-transform: uppercase; ";
-  s += " }\n ";
-  s += ".songtickerli-title {\n ";
+  s += " } ";
+  s += ".songtickerli-title { ";
   s += " display: block; ";
   s += " font-weight: bold; ";
   s += " text-transform: uppercase; ";
-  s += " }\n ";
-  s += ".songtickerli-artist {\n ";
+  s += " } ";
+  s += ".songtickerli-artist { ";
   s += " color: #505260; ";
-  s += " }\n ";
-  s += ".songtickerli-header {\n ";
+  s += " } ";
+  s += ".songtickerli-header { ";
   s += " font-size: 70%; ";
   s += " padding: 0.25em; ";
   s += " background-color: "+this.station.background_color+"; ";
-  s += " }\n ";
-  s += ".songtickerli-ticker-right {\n ";
+  s += " } ";
+  s += ".songtickerli-ticker-right { ";
   s += " right: 2px; ";
   s += " float: right; ";
   s += " color: #00B3E6; ";
   s += " background-color: "+this.station.background_color+"; ";
   s += " text-align: right; ";
-  s += " }\n ";
-  s += ".songtickerli-ticker-right {\n ";
+  s += " } ";
+  s += ".songtickerli-ticker-right { ";
   s += " background: transparent; ";
   s += " padding-bottom: 10px; ";
-  s += " }\n ";
-  s += ".songtickerli-ticker-left {\n ";
+  s += " } ";
+  s += ".songtickerli-ticker-left { ";
   s += " color: #00B3E6; ";
   s += " background-color: "+this.station.background_color+"; ";
   s += " text-align: left; ";
-  s += " }\n ";
-  s += ".songtickerli-ticker-info {\n ";
+  s += " } ";
+  s += ".songtickerli-ticker-info { ";
   s += " background: transparent; ";
   s += " position: absolute; ";
   s += " margin-top: 0px; ";
@@ -224,16 +286,17 @@ function Songticker(station, options) {
   s += " height: 70px; ";
   s += " display: none; ";
   s += " z-index: 6000;";
-  s += " }\n ";
-  s += ".songtickerli-ticker-info-link {\n ";
+  s += " } ";
+  s += ".songtickerli-ticker-info-link { ";
   s += " font-weight: bold; ";
   s += " font-size: 90%; ";
-  s += "}\n ";
-  s += ".songtickerli-ticker-info-overlay div {\n ";
+  s += " padding-right: 5px; ";
+  s += "} ";
+  s += ".songtickerli-ticker-info-overlay div { ";
   s += " background-color: "+this.station.background_color+"; ";
   s += " color: "+this.station.foreground_color+"; ";
-  s += "}\n ";
-  s += ".songtickerli-ticker-info-overlay {\n ";
+  s += "} ";
+  s += ".songtickerli-ticker-info-overlay { ";
   s += " background-color: "+this.station.background_color+"; ";
   s += " color: "+this.station.foreground_color+"; ";
   s += " text-align: center; ";
@@ -246,45 +309,46 @@ function Songticker(station, options) {
   s += " -webkit-border-radius: 6px; ";
   s += " border-radius: 6px; ";
   s += " font-size: 70%; ";
-  s += " }\n ";
-  s += ".songtickerli-station-info {\n ";
+  s += " } ";
+  s += ".songtickerli-station-info { ";
   s += " background-color: "+this.station.background_color+"; ";
   s += " color: "+this.station.foreground_color+"; ";
   s += " position: absolute; ";
   s += " margin-top: -15px; ";
   s += " display: none; ";
-  s += " -moz-border-radius: 6px; ";
-  s += " -webkit-border-radius: 6px; ";
-  s += " border-radius: 6px; ";
-  s += " }\n ";
-  s += ".songtickerli-station-info iframe {\n ";
+  s += " } ";
+  s += ".songtickerli-station-info iframe { ";
   s += " border: 0; ";
   s += " overflow: hide; ";
   s += " background: transparent; ";
-  s += " }\n ";
-  s += "#songtickerli a {\n ";
+  s += " } ";
+  s += "#songtickerli a { ";
   s += " color: "+this.station.foreground_color+"; ";
   s += " text-decoration: none; ";
-  s += " }\n ";
-  s += "#songtickerli a:link, #songtickerli a:visited, #songtickerli a:active {\n ";
+  s += " } ";
+  s += "#songtickerli a:link, #songtickerli a:visited, #songtickerli a:active { ";
   s += " color: "+this.station.foreground_color+"; ";
-  s += " }\n ";
-  s += "#songtickerli a:hover {\n ";
+  s += " } ";
+  s += "#songtickerli a:hover { ";
   s += " color: "+this.station.foreground_color+"; ";
   s += " text-decoration: underline; ";
-  s += " }\n ";
-  s += ".flXHRhideSwf {\n ";
+  s += " } ";
+  s += ".flXHRhideSwf { ";
   s += " display:block; ";
   s += " background: transparent; ";
   s += " postition: absolute; ";
   s += " left:-1px;top:0px;width:1px;height:1px; ";
-  s += " }\n ";
-  s += "#songtickerli .clear {\n ";
+  s += " } ";
+  s += "#songtickerli .clear { ";
   s += " clear: both; ";
-  s += " }\n ";
-  tickerstyle.textContent  = s;
-  tickerstyle.textContent += this.station.get_style();
-  tickerstyle.textContent += this.platform.get_style();
+  s += " } ";
+  s += this.station.get_style();
+  s += this.platform.get_style();
+  if (tickerstyle.styleSheet) { // IE
+   tickerstyle.styleSheet.cssText = s;
+  } else { // world
+   tickerstyle.textContent  = s;
+  }
   doc.appendChild(tickerstyle);
 
   tickerpopup = document.createElement('div');
@@ -309,7 +373,7 @@ function Songticker(station, options) {
   tickertext.style.float = 'right';
   tickerlink = document.createElement('a');
   tickerlink.href = 'http://songticker.li';
-  tickerlink.textContent = ' i ';
+  tickerlink.textContent = 'i';
   tickerlink.className = '.songtickerli-ticker-info-link';
   tickerlink.onclick = function() {
    if (tickerpopup.style.display == 'none') {
@@ -348,6 +412,9 @@ function Songticker(station, options) {
     stationpopup.style.display = 'block';
     stationpopup.children[0].src = songtickerli.station.infopopup;
   };
+  stationlink.onmouseout = function() {
+    stationpopup.style.display = 'none';
+  };
   stationtext.appendChild(stationlink);
   headerdiv.appendChild(stationtext);
 
@@ -364,9 +431,9 @@ function Songticker(station, options) {
   data = xml.getElementsByTagName(options.tagname);
   if (data[0])
    if (data[0].textContent)
-     data = data[0].textContent.substr(0,36);
+     data = data[0].textContent;
    else
-     data = data[0].text.substr(0,36);
+     data = data[0].text;
   else
    data = '';
   element = document.createElement('span');

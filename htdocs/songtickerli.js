@@ -1,7 +1,3 @@
-window.onload=function() {
-	Songtickerli('rabe.ch', {});
-};
-
 function onclick_popup() {
 	window.open('popup.html', 'songtickerli-popup', "width=306,height=40");
 	return false;

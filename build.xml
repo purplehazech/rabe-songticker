@@ -29,11 +29,13 @@
 				<exclude name="songtickerli.js"/>
 			</fileset>
 			<filterchain>
+			<!--
 					<filterreader classname="phing.filters.JSPackerFilter">
 						<param name="encoding" value="Numeric"/>
 						<param name="fastDecode" value="true"/>
 						<param name="specialCharacters" value="false"/>
 					</filterreader>
+			-->
 			</filterchain>
 		</copy>
 	</target>
@@ -45,7 +47,16 @@
 				<include name="*"/>
 			</fileset>
 		</copy>
-</target>
+	</target>
+
+	<target name="jxhr">
+		<unzip file="packages/jXHR-0.1.zip" todir="temp/"/>
+		<copy todir="work/jxhr" overwrite="true">
+			<fileset dir="temp/">
+				<include name="*min.js"/>
+			</fileset>
+		</copy>
+	</target>
 
 	<target name="publish" depends="stage">
 		<!-- takes the current checkout and uses the FileSyncTask from my portage overlay 
@@ -59,6 +70,7 @@
 			<fileset dir="${publish.destination}htdocs/">
 				<include name="*.*"/>
 				<include name="flensed/*.*"/>
+				<include name="flxhr/*.*"/>
 			</fileset>
 		</chmod>
 	</target>
