@@ -1,6 +1,6 @@
 var songtickerli = {};
 var _songtickerli_options;
-var flensed;
+var flensed = {};
 
 function SongTicker_Station_RaBe(options) {
  this.id = 'rabe.ch';
@@ -51,12 +51,18 @@ function SongTicker_Platform_Songtickerli(options) {
 
  this.get_infodiv = function() {
    div = document.createElement('div');
-   div.textContent = 'Hol dir den Ticker für deine Homepage auf: ';
+   div.appendChild(document.createTextNode('Hol dir den Ticker für deine Homepage auf: '));
+
    link = document.createElement('a');
    link.href = 'http://songticker.li';
    link.target = '_parent';
    link.textContent = 'http://songticker.li';
    div.appendChild(link);
+
+   outer = document.createElement('div');
+   outer.style.padding = '0.5em';
+   outer.appendChild(div);
+   return outer;
 
    return div;
  };
@@ -236,13 +242,14 @@ function Songticker(station, options) {
   s += " -moz-border-radius: 6px; ";
   s += " -webkit-border-radius: 6px; ";
   s += " border-radius: 6px; ";
+  s += " font-family: 'bitstream vera sans','lucida grande',verdana,sans-serif;";
   s += " } ";
   s += ".songtickerli-canvas { ";
   s += " text-align: center; ";
   s += " margin-left: 2px; ";
   s += " width: 219px; ";
   s += " height: 43px; ";
-  s += " background: url("+this.options.baseurl+"/bg_songticker.gif) no-repeat scroll left top; ";
+  s += " background: url(data:image/gif;base64,R0lGODlh2wAxAPeDAOfm5+7u7e/u7uzs7N/e3uHg4fDv7+Lh4Xl9geXl5cjHyNfX19DQ0KSkpKKioufn58vLy6KhosXFxUhNVMzMzOPj48rKynd6fys1QJqamsLCwsnJyebm5kdOVqOjo9HR0efm5rKysuvr652cncvKyiEsODY/SE9VXNra2sfHx8zLzIWHicC/wMbGxqinqMjIyKenp1leY0xRWE5UXKCfoNTT0zI8Rk1TWUhOVqOkpJeXly44QlpfY2ZpbS84QoCAglJXXjA6RNjY2E5TWtLR0nd4evHx8Y6NjlRZYJ6dnkpQVoiIiWtucnp+gs3NzdPT08zLy87OztbW1j5GTiUwO6Oio6GhoXJ1elxgZTM7RdLS0pubm7a2tjtDTJaWl6GgoU1UWtnY2Z+en+jo6GBmbLi4uDpDTNTU1ISGiH1+f15jZ31+gCAsNyMvOq+vr2drcaSjo5+foN3c3eTk5N7d3eLi4unp6VBVXOHh4d3c3Nzc3O7t7tvb2+/v7+Dg4N/f393d3d7e3u7u7hwoNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAIMALAAAAADbADEAAAj/AAcNYpNlxpsLFxAoXMiwocOHECNKnEixosWLGDNq3FjxQhMyU3YIFEgFBxo3GsKgCMSypcuXMGPKnEmzps2bOHPq3Mmz500UZ1jEuWJCYIkTOfgYWMq0qdOnUKNKnUq1qtWrWLNq3cq1qwgNK3wM6uJFRJ+zaNOqXcu2rdu3cOPKnUu3rt27ePOidcKkRI8FegMLHky4sOHDeF2YWGIEsePHkCNLLkwBTBIBmDNr3sy5s+fPoEOLHk26tOnTqFOr5izkjgNBsGPLnk27tu3buHPr3s27t+/fwIMLp73gRoPhyJMrX868uXPhCyYcf069uvXr2JkvUDI9u/fv4MM//19wp8Ge8+jTq1/Pvr379/Djy59Pv779+/jzryffXbz//wAGGBt/AhZo4IHUEYjgggw2uBt/AUQo4YQUVmjhhRhmqOGGHHbo4YcghijiiBXyp9+JKKao4oostpgfeXAMIOOMNNZo44045qjjjjz26OOPQAYp5JBE2ijFHR7YoeSSTDbp5JNQRinllFRWaeWVWGap5ZZcOvkEkgCEKeaYZJZp5plopqnmmmy26eabcMYp55xlEnFHFXPkqeeefPbp55+ABirooIQWauihiCaq6KJ9MuBaHZBGKumklFZq6aWYZqrpppx26umnoIYqKqVRuPbHqaimquqqrLbq6quwxv8q66y01mrrrbjmuioFd0Sgx6/ABivssMQWa+yxyCar7LLMNuvss9BGO6wFd1jBx7XYZqvtttx26+234IYr7rjklmvuueimu+0Gvarr7rvwxivvvPSmy66v0uar77789uvvv9BSG0EeBBds8MEIJ6zwwgw37PDDEEcs8cQUV2wxwgJfrPHGHHfs8ccgW0xCr4CUbPLJKKes8sost+zyyzDHLPPMNNds880pj+wAzjz37PPPQAct9M0QuDb00UgnrfTSQRftAB1QRy311FRXbfXVWGet9dZcd+3112CHLTbVTvtk9tlop6322my3XXbbcMct99x0z130F3XnrffefOv/XfQIBAQu+OCEF2744YgnrvjijDfu+OOQRy755IVDcUcGumau+eacd+7557nyijnopJdu+umody66H6y37vrrsMcu++y012777bjnrvvuvPfuO+yOjvD78MQXb/zxyCfv+weuVaD889BHL/30x9dwxxZ2FKD99tx37/334Icv/vjkl2/++einr/767HOPxwdArMFBBXjUb//9+Oev//789+///wAMoAAHSMACGvCA9rNDCE6AhTLYgX4IjKAEJ0jBClrwggF8QB2OgAEMpOEFY3jgAUZIwhKa8IQoTKEKV8jCFrrwhTCMoQxnSMMZ2iEQMIiBQILwAwnwAQ8PSIAQlIdIxCIa8YhITKISl8jEJjrxiVCMohSnWEQOPOCKWHwACEBQBzlogQY8GMkgMKAGHYRAAwpIgQTWKIEWKOCNcIyjHOdIxzra8Y54zKMe98jHPvrxj35UAQMGSchBKoALYihCB8Q4kjaYAQl3GMIEJjkBGdzhkpjMpCY3yclOevKToAylKEdJylKa8pSo7GQHbMDIgAAAOw==) no-repeat scroll left top; ";
   s += " color: #E7501E; ";
   s += " font-family: 'bitstream vera sans','lucida grande',verdana,sans-serif; ";
   s += " font-size: 10px; ";
@@ -288,9 +295,11 @@ function Songticker(station, options) {
   s += " position: absolute; ";
   s += " margin-top: 0px; ";
   s += " width: 220px; ";
-  s += " height: 70px; ";
+  s += " height: 50px; ";
   s += " display: none; ";
   s += " z-index: 6000;";
+  s += " } ";
+  s += ".songtickerli-ticker-info > div { ";
   s += " } ";
   s += ".songtickerli-ticker-info-link { ";
   s += " font-weight: bold; ";
