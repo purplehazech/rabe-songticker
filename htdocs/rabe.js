@@ -5,6 +5,7 @@ var flensed = {};
 function SongTicker_Station_RaBe(options) {
  this.id = 'rabe.ch';
  this.path = options.baseurl+'/data/rabe.ch/0.9.1/';
+ //this.path = options.baseurl+'/current.xml';
  this.type = 'xml';
  this.name = 'Radio RaBe 95.6 MHz';
  this.url  = 'http://www.rabe.ch';
@@ -159,7 +160,7 @@ function Songticker(station, options) {
 
  // trim12 from http://blog.stevenlevithan.com/archives/faster-trim-javascript
  this.trim = function(str) {
-  ws = /\s/,
+  ws = /.*/,
   i = str.length;
   while (ws.test(str.charAt(--i))) {
    return str.slice(0, i + 1);
@@ -447,10 +448,7 @@ function Songticker(station, options) {
  this.get_span_element = function(xml, options) {
   data = xml.getElementsByTagName(options.tagname);
   if (data[0])
-   if (data[0].textContent)
-     data = data[0].textContent;
-   else
-     data = data[0].text;
+   data = data[0].textContent;
   else
    data = '';
   element = document.createElement('span');

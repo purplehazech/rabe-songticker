@@ -18,6 +18,7 @@
 				<include name="*.ico"/>
 				<include name="*.xml"/>
 				<include name="songtickerli.js"/>
+				<include name="facebook/"/>
 			</fileset>
 		</copy>
 	</target>

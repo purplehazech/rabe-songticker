@@ -58,11 +58,18 @@
     margin: 0;
     padding: 0;
    }
-   code {
-    font-size: 70%;
-    line-height: 20%;
+   pre.code {
+    border: 1px dotted;
+    background: #F0F0F0;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 0.5em;
+    font-size: 60%;
+    line-height: 60%;
    }
-
+   #jscode {
+    margin-top: 1em;
+   }
    .hidden {
     display: none;
    }
@@ -102,6 +109,7 @@
    <div class="box" id="ticker-container">
     <h2>Ticker</h2>
     <div id="songtickerli"></div><script src="rabe.js"></script>
+    <noscript><a href="http://www.rabe.ch"><img src="http://dev.songticker.li/rabe_gruen.png" style="border:0"/></a></noscript>
     <a class="popuplink" href="popup.html" target="songtickerli-popup" onclick="return onclick_popup();">^^</a>
    </div>
    <div class="box">
@@ -118,7 +126,8 @@
      </script>
     </div>
     -->
-    Noch Fragen? Die kannst du hier stellen.
+    Noch Fragen? Die kannst du hier stellen<noscript>, wenn du Javascript aktivierst</noscript>.
+    <!--
     <div id="intensedebate">
      <script>
       // intensedebate setup
@@ -129,6 +138,7 @@
      <span id="IDCommentsPostTitle" style="display:none"></span>
      <script type='text/javascript' src='http://www.intensedebate.com/js/genericCommentWrapperV2.js' async="async"></script>
     </div>
+    -->
    </div>
   </div>
   <div class="left box">
@@ -141,16 +151,17 @@
    </p>
    <h2>Beispielcode</h2>
    <h3>Javascript</h3>
-   <pre><code>
-&lt;script type="text/javascript" src="http://songticker.li/rabe.js"&gt;&lt;/script&gt;
-   </code></pre>
+   <div id="jscode">
+    <pre class="code">&lt;script type="text/javascript" src="http://songticker.li/rabe.js"&gt;&lt;/script&gt;<br/>
+&lt;noscript&gt;<br/>
+ &lt;a href="http://www.rabe.ch"&gt;&lt;img src="http://songticker.li/rabe_gruen.png"/&gt;&lt;/a&gt;<br/>
+&lt;/noscript&gt;</pre>
+   </div>
    <h3>Apache</h3>
-    <pre class="hidden"><code class="hidden">
-ProxyPass        /songtickerli http://songticker.li/data/rabe.ch/
+    <pre class="hidden code"><code class="hidden">ProxyPass        /songtickerli http://songticker.li/data/rabe.ch/
 ProxyPassReverse /songtickerli http://songticker.li/data/rabe.ch/
 CacheEnable  mem /songtickerli
-CacheMaxExpire 16
-    </code></pre>
+CacheMaxExpire 16</code></pre>
    <h3>myspace</h3>
    <h3>facebook</h3>
    <h3>last.fm</h3>
