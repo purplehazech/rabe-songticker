@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="songticker.li" 
+               description="Ein Songticker for Radio RaBe 95.6Mhz"
+	       author="Lucas Bickel"
+               author_email="hairmare@gmail.com" />
+  <Content type="html"><![CDATA[<script type="text/javascript" src="http://test.songticker.li/rabe.js"></script>]]></Content>
+</Module>

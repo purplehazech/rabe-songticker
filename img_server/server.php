@@ -27,11 +27,13 @@ class ImageServer_Output_Abstract {
 		$this->init();
 	}
 	function init() {
-		$this->image_handle = imagecreatetruecolor(288, 72);
+		$this->image_handle = imagecreate(288, 72);
 		imagealphablending($this->image_handle, false);
 		imagesavealpha($this->image_handle, true);
+		imageantialias($this->image_handle, true);
+		$this->colors['black'] = imagecolorallocatealpha($this->image_handle,0,0,0,127);
+		imagecolortransparent($this->image_handle,$this->colors['black']);
 		$this->colors['white'] = imagecolorallocate($this->image_handle,255,255,255);
-		//$this->colors['black'] = imagecolorallocatealpha($this->image_handle,0,0,0,127);
 		//$this->colors['white'] = imagecolorallocatealpha($this->image_handle, 255, 255, 255, 127);
 		foreach ($this->options['colors'] AS $name => $hex) {
 			$a = sscanf($hex, '#%2x%2x%2x');
@@ -47,6 +49,7 @@ class ImageServer_Output_Abstract {
 		imagecopy($this->image_handle, $logo_handle, 4, 2, 0, 0, imagesx($logo_handle), imagesy($logo_handle));
 		
 		imagestring($this->image_handle, 2, 67, 2, $this->caller->station->name, $this->colors['foreground']);
+		#imagettftext($this->image_handle, 12, 0, 67, 14, $this->colors['foreground'], 'img_server/Vera.ttf', $this->caller->station->name);
 	}
 	function imagefillroundedrect($x,$y,$cx,$cy,$rad,$col) {
 		$im = $this->image_handle;
@@ -65,18 +68,17 @@ class ImageServer_Output_Abstract {
 		$imagetype_func = $this->image_type;
 		$imagetarget = $this->options['target'];
 
-		if (!empty($this->caller->simplexml->title)) {
+		if ((string) $this->caller->simplexml->title != '') {
 			$title = $this->caller->simplexml->title;
-		} else if (!empty($this->caller->simlexml->message)) {
-			$title = $this->caller->simlexml->message;
+		} else if ((string) $this->caller->simplexml->message != '') {
+			$title = $this->caller->simplexml->message;
 		}
 		if (!empty($this->caller->simplexml->artist)) {
 			$artist = $this->caller->simplexml->artist;
 		}
 		
-
-		imagestring($this->image_handle, 3, 70, 25, strtoupper($title), $this->colors['title']);
-		imagestring($this->image_handle, 2, 70, 40, $artist, $this->colors['artist']);
+		imagestring($this->image_handle, 3, 70, 25, strtoupper(utf8_decode($title)), $this->colors['title']);
+		imagestring($this->image_handle, 2, 70, 40, utf8_decode($artist), $this->colors['artist']);
 		
 		return $imagetype_func($this->image_handle, $imagetarget);
 	}
@@ -154,7 +156,7 @@ $options = array(
 	'output' => array(
 		array(
 			'type'   => 'png',
-			'target' => '/var/www/dev.songticker.li/htdocs/test.png',
+			'target' => '/var/www/dev.songticker.li/htdocs/rabe_gruen.png',
 			'colors' => array(
 				'background' => '#1C2734',
 				'foreground' => '#C4E218',

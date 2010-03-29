@@ -1,21 +1,98 @@
+/**
+ * RaBe Songticker.li
+ *
+ * this is a monolithic javascript file that contains all the 
+ * bits and piecees needed for the Songticker. It is split up
+ * over various prototype interfaces aiming to be modular so
+ * i can use the same code for numerous social sites. as of 
+ * now the main targets are a simple js interface for coders
+ * that roll their own system as well as a opensocial interface
+ * for integration in community webpages (mainly myspace and
+ * by way of an opensocial2fb proxy also facebook)
+ *
+ * the code constist of the following structures
+ * - Songticker Prototype
+ *   This is where most of the action happens, It delegates 
+ *   stuff to
+ * - Songticker_Station_RaBe
+ *   A place for station specific stuff so i can support 
+ *   multiple stations at a later date.
+ * - Songticker_Platform_Songtickerli
+ *   Platform specific stuff like basic contents of infopopup and love button integration
+ * The following Prototypes are not implemented yet
+ * - Songticker_Platform_OpenSocial
+ * - Songticker_Transport_XHR
+ *   Basic transport w/o XSS for use on songticker.li
+ * - Songticker_Transport_flXHR
+ *   Flash based XSS XHR for use on other domains
+ * - Songticker_Transport_OpenSocial
+ *   os based cross domain xhr for opensocial
+ */
+
+/**
+ * main global var Songticker will live in
+ */
 var songtickerli = {};
+/**
+ * put site specfic config in here
+ */
 var _songtickerli_options;
+/**
+ * global var needed for aa clean flXHR init 
+ * used by Songticker_Transport_flXHR and on
+ * by default due to flXHRs popularity
+ */
 var flensed = {};
 
+/**
+ * Radio Rabe 95.6 Data
+ *
+ * Contains all the station specific data as well
+ * as hooks for some required callbacks for CSS 
+ * styling etc.
+ */
 function SongTicker_Station_RaBe(options) {
  this.id = 'rabe.ch';
+ /**
+  * path to ticker feed
+  */
  this.path = options.baseurl+'/data/rabe.ch/0.9.1/';
  //this.path = options.baseurl+'/current.xml';
+ /**
+  * type of feed 
+  * only xml is implemented, adding json would need support on the ticker
+  */
  this.type = 'xml';
+ /**
+  * station name for display on the ticker (top left)
+  */
  this.name = 'Radio RaBe 95.6 MHz';
+ /**
+  * station url gets used as link for the station name when the popup cant be
+  * shown due to degraded functionality on unsupported browsers or when no 
+  * infopopup is supplied.
+  */
  this.url  = 'http://www.rabe.ch';
+ /**
+  * infopoup location if a iframe popup is wanted. this decision is really a
+  * feature for use by the station and its actually quite annoying. it should 
+  * be able to drice quite some traffic back to the station and it also might
+  * be used to add a webplayer link or whatnot.
+  */
  //this.infopopup = 'http://www.rabe.ch/songticker.html';
  this.infopopup = options.baseurl+'/testpopup.html?color='+options.colorscheme;
 
+ /**
+  * set default color to green since i grabbed that from facebook
+  */
  if (typeof options.colorscheme == 'undefined') {
    options.colorscheme = 'green';
  }
 
+ /**
+  * RaBe needs support for multiple colors, images included as base64
+  * to make the whole thing stay in this js.
+  */
  switch (options.colorscheme) {
    case 'red':
    	this.foreground_color = 'red';
@@ -31,6 +108,10 @@ function SongTicker_Station_RaBe(options) {
    break;
  }
 
+ /**
+  * the get style callback returns a string  for injecting 
+  * into the songtickerli css sheet
+  */
  this.get_style = function() {
    s  = ".rabe-songtickerli-infopopup-frame { ";
    s += " overflow: hide; ";
@@ -38,6 +119,9 @@ function SongTicker_Station_RaBe(options) {
    return s;
  };
 
+ /**
+  * obsolete?
+  */
  this.get_infopopup = function() {
    rabeframe = document.createElement('iframe');
    rabeframe.className = 'rabe-songtickerli-infopopup-frame';
@@ -73,16 +157,22 @@ function SongTicker_Platform_Songtickerli(options) {
 
 };
 
+function Songticker_Transport_flXHR(options) {
+};
+
 function Songticker(station, options) {
  this.options = options;
  if (typeof this.options.elementid == 'undefined') {
    this.options.elementid = 'songtickerli';
  }
  if (typeof this.options.baseurl == 'undefined') {
-   this.options.baseurl = 'http://dev.songticker.li';
+   this.options.baseurl = 'http://test.songticker.li';
  }
  if (typeof options.platform == 'undefined') {
    options.platform = 'Songtickerli';
+ }
+ if (typeof options.transport == 'undefined') {
+   options.transport = 'flXHR';
  }
  switch(station) {
    case 'rabe.ch':
@@ -100,6 +190,15 @@ function Songticker(station, options) {
      throw Exception('unknown platform');
    break;
  }
+ switch (options.transport) {
+   case 'flXHR':
+     this.transport = new Songticker_Transport_flXHR(this.options);
+   break;
+   default:
+     throw Exception('unknown transport');
+   break;
+ }
+
  // defer startup if we where called in head
  l = document.getElementsByTagName('body').length;
  if (document.getElementsByTagName('body').length != 1) {
@@ -130,6 +229,7 @@ function Songticker(station, options) {
     songtickerli.Tick();
    }, 10);
   }
+  // @todo abstraction layer for request handling to make way for opensocial
   req = flensed.flXHR({
    autoUpdatePlayer: true,
    instancePooling: true
@@ -173,13 +273,18 @@ function Songticker(station, options) {
     text._reverse = false;
   }
   if (typeof this.trim(text._text.substr(text._index, len)) != 'undefined') {
-   text.textContent = this.trim(text._text.substr(text._index, len));
+   // stay on the first letter for a bit longer by going negative with the index
+   if (text._index < 0)
+    index = 0;
+   else
+    index = text._index;
+   text.textContent = this.trim(text._text.substr(index, len));
   } else {
    text.textContent = text._text;
   }
   if (text._index + len >= text._text.length) {
     text._reverse = true;
-  } else if (text._index <= 0) {
+  } else if (text._index <= -3 ) {
     text._reverse = false;
   }
   if (text._reverse) {
@@ -196,11 +301,10 @@ function Songticker(station, options) {
   // store original for processing
   title._text = title.textContent;
 
+  clearInterval(this.titletimeout);
   maxlen = 30;
   if (title.textContent.length > maxlen) {
    this.titlescroll = true;
-  } else {
-   clearInterval(this.titletimeout);
   }
 
   if (this.titlescroll == true) {
@@ -236,130 +340,7 @@ function Songticker(station, options) {
   tickerstyle = document.createElement('style');
   tickerstyle.type = 'text/css';
   tickerstyle.setAttribute("type", "text/css");
-  s  = "#songtickerli { ";
-  s += " border: 1px solid #303030; ";
-  s += " background: "+this.station.background_color+"; ";
-  s += " width: 223px; ";
-  s += " padding-left: 62px; ";
-  s += " padding-right: 2px; ";
-  s += " background: url("+this.station.logo+") no-repeat scroll 2px 2px "+this.station.background_color+"; ";
-  s += " -moz-border-radius: 6px; ";
-  s += " -webkit-border-radius: 6px; ";
-  s += " border-radius: 6px; ";
-  s += " font-family: 'bitstream vera sans','lucida grande',verdana,sans-serif;";
-  s += " } ";
-  s += ".songtickerli-canvas { ";
-  s += " text-align: center; ";
-  s += " margin-left: 2px; ";
-  s += " width: 219px; ";
-  s += " height: 43px; ";
-  s += " background: url(data:image/gif;base64,R0lGODlh2wAxAPeDAOfm5+7u7e/u7uzs7N/e3uHg4fDv7+Lh4Xl9geXl5cjHyNfX19DQ0KSkpKKioufn58vLy6KhosXFxUhNVMzMzOPj48rKynd6fys1QJqamsLCwsnJyebm5kdOVqOjo9HR0efm5rKysuvr652cncvKyiEsODY/SE9VXNra2sfHx8zLzIWHicC/wMbGxqinqMjIyKenp1leY0xRWE5UXKCfoNTT0zI8Rk1TWUhOVqOkpJeXly44QlpfY2ZpbS84QoCAglJXXjA6RNjY2E5TWtLR0nd4evHx8Y6NjlRZYJ6dnkpQVoiIiWtucnp+gs3NzdPT08zLy87OztbW1j5GTiUwO6Oio6GhoXJ1elxgZTM7RdLS0pubm7a2tjtDTJaWl6GgoU1UWtnY2Z+en+jo6GBmbLi4uDpDTNTU1ISGiH1+f15jZ31+gCAsNyMvOq+vr2drcaSjo5+foN3c3eTk5N7d3eLi4unp6VBVXOHh4d3c3Nzc3O7t7tvb2+/v7+Dg4N/f393d3d7e3u7u7hwoNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAIMALAAAAADbADEAAAj/AAcNYpNlxpsLFxAoXMiwocOHECNKnEixosWLGDNq3FjxQhMyU3YIFEgFBxo3GsKgCMSypcuXMGPKnEmzps2bOHPq3Mmz500UZ1jEuWJCYIkTOfgYWMq0qdOnUKNKnUq1qtWrWLNq3cq1qwgNK3wM6uJFRJ+zaNOqXcu2rdu3cOPKnUu3rt27ePOidcKkRI8FegMLHky4sOHDeF2YWGIEsePHkCNLLkwBTBIBmDNr3sy5s+fPoEOLHk26tOnTqFOr5izkjgNBsGPLnk27tu3buHPr3s27t+/fwIMLp73gRoPhyJMrX868uXPhCyYcf069uvXr2JkvUDI9u/fv4MM//19wp8Ge8+jTq1/Pvr379/Djy59Pv779+/jzryffXbz//wAGGBt/AhZo4IHUEYjgggw2uBt/AUQo4YQUVmjhhRhmqOGGHHbo4YcghijiiBXyp9+JKKao4oostpgfeXAMIOOMNNZo44045qjjjjz26OOPQAYp5JBE2ijFHR7YoeSSTDbp5JNQRinllFRWaeWVWGap5ZZcOvkEkgCEKeaYZJZp5plopqnmmmy26eabcMYp55xlEnFHFXPkqeeefPbp55+ABirooIQWauihiCaq6KJ9MuBaHZBGKumklFZq6aWYZqrpppx26umnoIYqKqVRuPbHqaimquqqrLbq6quwxv8q66y01mrrrbjmuioFd0Sgx6/ABivssMQWa+yxyCar7LLMNuvss9BGO6wFd1jBx7XYZqvtttx26+234IYr7rjklmvuueimu+0Gvarr7rvwxivvvPSmy66v0uar77789uvvv9BSG0EeBBds8MEIJ6zwwgw37PDDEEcs8cQUV2wxwgJfrPHGHHfs8ccgW0xCr4CUbPLJKKes8sost+zyyzDHLPPMNNds880pj+wAzjz37PPPQAct9M0QuDb00UgnrfTSQRftAB1QRy311FRXbfXVWGet9dZcd+3112CHLTbVTvtk9tlop6322my3XXbbcMct99x0z130F3XnrffefOv/XfQIBAQu+OCEF2744YgnrvjijDfu+OOQRy755IVDcUcGumau+eacd+7557nyijnopJdu+umody66H6y37vrrsMcu++y012777bjnrvvuvPfuO+yOjvD78MQXb/zxyCfv+weuVaD889BHL/30x9dwxxZ2FKD99tx37/334Icv/vjkl2/++einr/767HOPxwdArMFBBXjUb//9+Oev//789+///wAMoAAHSMACGvCA9rNDCE6AhTLYgX4IjKAEJ0jBClrwggF8QB2OgAEMpOEFY3jgAUZIwhKa8IQoTKEKV8jCFrrwhTCMoQxnSMMZ2iEQMIiBQILwAwnwAQ8PSIAQlIdIxCIa8YhITKISl8jEJjrxiVCMohSnWEQOPOCKWHwACEBQBzlogQY8GMkgMKAGHYRAAwpIgQTWKIEWKOCNcIyjHOdIxzra8Y54zKMe98jHPvrxj35UAQMGSchBKoALYihCB8Q4kjaYAQl3GMIEJjkBGdzhkpjMpCY3yclOevKToAylKEdJylKa8pSo7GQHbMDIgAAAOw==) no-repeat scroll left top; ";
-  s += " color: #E7501E; ";
-  s += " font-family: 'bitstream vera sans','lucida grande',verdana,sans-serif; ";
-  s += " font-size: 10px; ";
-  s += " padding-top: 10px; ";
-  s += " padding-left: 3px; ";
-  s += " padding-right: 6px; ";
-  s += " } ";
-  s += ".songtickerli-message { ";
-  s += " font-weight: bold; ";
-  s += " text-transform: uppercase; ";
-  s += " } ";
-  s += ".songtickerli-title { ";
-  s += " display: block; ";
-  s += " font-weight: bold; ";
-  s += " text-transform: uppercase; ";
-  s += " } ";
-  s += ".songtickerli-artist { ";
-  s += " color: #505260; ";
-  s += " } ";
-  s += ".songtickerli-header { ";
-  s += " font-size: 70%; ";
-  s += " padding: 0.25em; ";
-  s += " background-color: "+this.station.background_color+"; ";
-  s += " } ";
-  s += ".songtickerli-ticker-right { ";
-  s += " right: 2px; ";
-  s += " float: right; ";
-  s += " color: #00B3E6; ";
-  s += " background-color: "+this.station.background_color+"; ";
-  s += " text-align: right; ";
-  s += " } ";
-  s += ".songtickerli-ticker-right { ";
-  s += " background: transparent; ";
-  s += " padding-bottom: 10px; ";
-  s += " } ";
-  s += ".songtickerli-ticker-left { ";
-  s += " color: #00B3E6; ";
-  s += " background-color: "+this.station.background_color+"; ";
-  s += " text-align: left; ";
-  s += " } ";
-  s += ".songtickerli-ticker-info { ";
-  s += " background: transparent; ";
-  s += " position: absolute; ";
-  s += " margin-top: -1px; ";
-  s += " width: 220px; ";
-  s += " height: 50px; ";
-  s += " display: none; ";
-  s += " z-index: 6000;";
-  s += " } ";
-  s += ".songtickerli-ticker-info > div { ";
-  s += " } ";
-  s += ".songtickerli-ticker-info-link { ";
-  s += " font-weight: bold; ";
-  s += " font-size: 90%; ";
-  s += " padding-right: 5px; ";
-  s += "} ";
-  s += ".songtickerli-ticker-info-overlay div { ";
-  s += " background-color: "+this.station.background_color+"; ";
-  s += " color: "+this.station.foreground_color+"; ";
-  s += "} ";
-  s += ".songtickerli-ticker-info-overlay { ";
-  s += " background-color: "+this.station.background_color+"; ";
-  s += " color: "+this.station.foreground_color+"; ";
-  s += " text-align: center; ";
-  s += " position: absolute; ";
-  s += " margin-top: 20px; ";
-  s += " margin-left: 1px; ";
-  s += " width: 220px; ";
-  s += " height: 50px; ";
-  s += " -moz-border-radius: 6px; ";
-  s += " -webkit-border-radius: 6px; ";
-  s += " border-radius: 6px; ";
-  s += " font-size: 70%; ";
-  s += " } ";
-  s += ".songtickerli-station-info { ";
-  s += " background-color: "+this.station.background_color+"; ";
-  s += " color: "+this.station.foreground_color+"; ";
-  s += " position: absolute; ";
-  s += " margin-top: -15px; ";
-  s += " display: none; ";
-  s += " } ";
-  s += ".songtickerli-station-info iframe { ";
-  s += " border: 0; ";
-  s += " overflow: hide; ";
-  s += " opacity: 1;";
-  s += " } ";
-  s += "#songtickerli a { ";
-  s += " color: "+this.station.foreground_color+"; ";
-  s += " text-decoration: none; ";
-  s += " } ";
-  s += "#songtickerli a:link, #songtickerli a:visited, #songtickerli a:active { ";
-  s += " color: "+this.station.foreground_color+"; ";
-  s += " } ";
-  s += "#songtickerli a:hover { ";
-  s += " color: "+this.station.foreground_color+"; ";
-  s += " text-decoration: underline; ";
-  s += " } ";
-  s += ".flXHRhideSwf { ";
-  s += " display:block; ";
-  s += " background: transparent; ";
-  s += " postition: absolute; ";
-  s += " left:-1px;top:0px;width:1px;height:1px; ";
-  s += " } ";
-  s += "#songtickerli .clear { ";
-  s += " clear: both; ";
-  s += " } ";
+  s  = "/*ccs_token[rabe]*/"
   s += this.station.get_style();
   s += this.platform.get_style();
   if (tickerstyle.styleSheet) { // IE
@@ -389,50 +370,68 @@ function Songticker(station, options) {
   tickerpopup.appendChild(infodiv);
   doc.appendChild(tickerpopup);
 
+  // @todo add more features to the core info part like a love button next to it
+
   tickertext = document.createElement('div');
   tickertext.className = 'songtickerli-ticker-right';
   tickertext.style.float = 'right';
+
+  lovebutton = document.createElement('a');
+  lovebutton.className = 'songtickerli-ticker-right';
+  lovebutton.style.float = 'right';
+  lovebutton.href = '#';
+  lovebutton.textContent = '♥';
+  lovebutton.className = 'songtickerli-ticker-love-button';
+  tickertext.appendChild(lovebutton);
+
   tickerlink = document.createElement('a');
   tickerlink.href = 'http://songticker.li';
-  tickerlink.textContent = 'i';
-  tickerlink.className = '.songtickerli-ticker-info-link';
+  tickerlink.textContent = 'ℹ';
+  tickerlink.className = 'songtickerli-ticker-info-link';
   tickerlink.onclick = function() {
    tickerpopup.style.display = 'block';
    tickerlink.blur();
    return false;
   };
   tickertext.appendChild(tickerlink);
+
   headerdiv.appendChild(tickertext);
   doc.appendChild(headerdiv);
 
+  
+
   stationpopup = document.createElement('div');
   stationpopup.className = 'songtickerli-station-info';
-  infoframe = this.station.get_infopopup();
-  infoframe.width = 221;
-  infoframe.height = 65;
-  stationpopup.appendChild(infoframe);
-  stationpopup.station = station;
-  stationpopup.frame = infoframe;
-  stationpopup.onmouseover = function() {
-    stationpopup.style.display = 'block';
-  };
-  stationpopup.onmouseout = function() {
-    stationpopup.style.display = 'none';
-  };
-  doc.appendChild(stationpopup);
+  if (typeof this.station.infopopup != 'undefined') {
+    infoframe = this.station.get_infopopup();
+    infoframe.width = 221;
+    infoframe.height = 65;
+    stationpopup.appendChild(infoframe);
+    stationpopup.station = station;
+    stationpopup.frame = infoframe;
+    stationpopup.onmouseover = function() {
+      stationpopup.style.display = 'block';
+    };
+    stationpopup.onmouseout = function() {
+      stationpopup.style.display = 'none';
+    };
+    doc.appendChild(stationpopup);
+  }
 
   stationtext = document.createElement('div');
   stationtext.className = 'songtickerli-ticker-left';
   stationlink = document.createElement('a');
   stationlink.href = this.station.url;
   stationlink.textContent = this.station.name;
-  stationlink.onmouseover = function() {
-    stationpopup.style.display = 'block';
-    stationpopup.children[0].src = songtickerli.station.infopopup;
-  };
-  stationlink.onmouseout = function() {
-    stationpopup.style.display = 'none';
-  };
+  if (typeof this.station.infopopup != 'undefined') {
+    stationlink.onmouseover = function() {
+      stationpopup.style.display = 'block';
+      stationpopup.children[0].src = songtickerli.station.infopopup;
+    };
+    stationlink.onmouseout = function() {
+      stationpopup.style.display = 'none';
+    };
+  }
   stationtext.appendChild(stationlink);
   headerdiv.appendChild(stationtext);
 

@@ -19,23 +19,37 @@
 				<include name="*.xml"/>
 				<include name="songtickerli.js"/>
 				<include name="facebook/"/>
+				<include name="opensocial/"/>
 			</fileset>
 		</copy>
 	</target>
 
 	<target name="pack-js">
+		<!-- prep css for inclusion in rabe.js -->
+		<copy todir="work/" overwrite="true">
+			<fileset dir="htdocs/">
+				<include name="style_*.css"/>
+			</fileset>
+			<filterchain>
+				<striplinebreaks/>
+				<prefixlines prefix="s = &quot;"/>
+			</filterchain>
+		</copy>
+		<append destFile="work/rabe.css" text="&quot;;"/>
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.js"/>
 				<exclude name="songtickerli.js"/>
 			</fileset>
 			<filterchain>
+				<replacetokenswithfile begintoken="/*ccs_token[" endtoken="]*/" dir="work/" prefix="style_" postfix=".css"/>
+			<!--
 					<filterreader classname="phing.filters.JSPackerFilter">
 						<param name="encoding" value="Numeric"/>
 						<param name="fastDecode" value="true"/>
 						<param name="specialCharacters" value="false"/>
 					</filterreader>
-			</filterchain>
+			--></filterchain>
 		</copy>
 	</target>
 
