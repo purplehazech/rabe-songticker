@@ -340,7 +340,7 @@ function Songticker(station, options) {
   tickerstyle = document.createElement('style');
   tickerstyle.type = 'text/css';
   tickerstyle.setAttribute("type", "text/css");
-  s  = "/*ccs_token[rabe]*/"
+  s  = "ccs_token[[[rabe]]]"
   s += this.station.get_style();
   s += this.platform.get_style();
   if (tickerstyle.styleSheet) { // IE

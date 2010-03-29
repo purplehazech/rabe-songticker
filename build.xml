@@ -32,24 +32,28 @@
 			</fileset>
 			<filterchain>
 				<striplinebreaks/>
-				<prefixlines prefix="s = &quot;"/>
 			</filterchain>
 		</copy>
-		<append destFile="work/rabe.css" text="&quot;;"/>
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.js"/>
 				<exclude name="songtickerli.js"/>
 			</fileset>
 			<filterchain>
-				<replacetokenswithfile begintoken="/*ccs_token[" endtoken="]*/" dir="work/" prefix="style_" postfix=".css"/>
-			<!--
-					<filterreader classname="phing.filters.JSPackerFilter">
-						<param name="encoding" value="Numeric"/>
-						<param name="fastDecode" value="true"/>
-						<param name="specialCharacters" value="false"/>
-					</filterreader>
-			--></filterchain>
+				<filterreader classname="phing.filters.ReplaceTokensWithFile">
+					<param name="dir"           value="work/"/>
+					<param name="begintoken"    value="ccs_token[[["/>
+					<param name="endtoken"      value="]]]"/>
+					<param name="prefix"        value="style_"/>
+					<param name="postfix"       value=".css" />
+					<param name="translatehtml" value="false"/>
+				</filterreader>
+				<filterreader classname="phing.filters.JSPackerFilter">
+					<param name="encoding" value="Numeric"/>
+					<param name="fastDecode" value="true"/>
+					<param name="specialCharacters" value="false"/>
+				</filterreader>
+			</filterchain>
 		</copy>
 	</target>
 
