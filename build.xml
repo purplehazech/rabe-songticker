@@ -9,7 +9,7 @@
 		<!-- not implemented ;) -->
 	</target>
 
-	<target name="stage" depends="pack-js,flxhr">
+	<target name="build" depends="pack-js,flxhr">
 		<copy todir="work" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.html"/>
@@ -48,11 +48,13 @@
 					<param name="postfix"       value=".css" />
 					<param name="translatehtml" value="false"/>
 				</filterreader>
+				<!--
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Numeric"/>
 					<param name="fastDecode" value="true"/>
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
+				-->
 			</filterchain>
 		</copy>
 	</target>
@@ -75,7 +77,7 @@
 		</copy>
 	</target>
 
-	<target name="publish" depends="stage">
+	<target name="publish" depends="build">
 		<!-- takes the current checkout and uses the FileSyncTask from my portage overlay 
 		     to publish it to a location defined in build.properties -->
 		<sync sourcedir="work/"
