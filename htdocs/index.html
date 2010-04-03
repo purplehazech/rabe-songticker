@@ -1,182 +1,87 @@
 <!DOCTYPE html>
 <html>
-<head>
-<!-- songticker.li - 2010 - Lucas S. Bickel
 
-     Teile von songticker.li stehen unter der MIT Lizenz <http://www.opensource.org/licenses/mit-license.php>
-      - flXHR 1.0.5 <http://flxhr.flensed.com/>
-        Copyright (c) 2008 Kyle Simpson, Getify Solutions, Inc.
-      - SWFObject v2.1 & 2.2a8 <http://code.google.com/p/swfobject/>
-        Copyright (c) 2007-2008 Geoff Stearns, Michael Williams, and Bobby van der Sluis
--->
-<meta charset="UTF-8"/>
-<title>songticker.li</title>
-<style type="text/css">
-   html {
-    background: #505260;
-   }
-   body {
-    padding: 0;
-    margin: 0;
-    background: white;
-    font-family: "Helvetica", sans-serif;
-   }
-   div {
-    background: white;
-   }
-   #songtickerli-main {
-    margin-top: -1em;
-    padding: 1em;
-    padding-top: 1.5em;
-    background: #505260;
-    height: 100%;
-   }
-   h1,h2,h3 {
-    display:none;
-   }
-   p,pre {
-    margin-bottom: -0.75em;
-   }
-   .box {
-    border: 4px solid #1C2734;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-    padding: 2em;
-    margin: 1em;
-   }
-   .left {
-    padding-top: 1em;
-    padding-bottom: 3em;
-    text-align: justify;
-    width: 40%;
-   }
-   .right {
-    float:right;
-    background: transparent;
-    width: 50%;
-    margin: 0;
-    padding: 0;
-   }
-   pre.code {
-    border: 1px dotted;
-    background: #F0F0F0;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    padding-left: 0.5em;
-    font-size: 60%;
-    line-height: 60%;
-   }
-   #jscode {
-    margin-top: 1em;
-   }
-   .hidden {
-    display: none;
-   }
+<style>
+body {
+background:black;
+}
+css_token{style_rabe}
+</style>
+<script src="jquery.js"></script>
+<script src="jquery.json.js"></script>
+<script src="jquery.jstore-all.js"></script>c
 
-   #ticker-container {
-    padding-top: 0;
-    padding-left: 0;
-    border: 0;
-    background-color: transparent;
-   }
-   #ticker-container .popuplink {
-    color: white;
-    position: relative;
-    left: 295px;
-    top: -76px;
-    text-decoration: none;
-   }
-   #ticker-container a.popuplink:hover {
-    color: #C4E218;
-   }
+<script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script>
 
-   #sharethis {
-    float: right;
-   }
-
-   #idc-sortLinks p {
-    font-size: 80%;
-   }
-  </style>
-  <script src="songtickerli.js"></script>
-  <!--script type="text/javascript" src="http://w.sharethis.com/button/sharethis.js#publisher=b3d79d06-df59-4098-863b-7fe8ecdf35b7&amp;type=website&amp;buttonText=songtickerli%20verlinken&amp;style=rotate"></script-->
- </head>
- <body id="songtickerli-page">
-  <div id="songtickerli-main">
-  <h1>songtickerli</h1>
-  <div class="right">
-   <div class="box" id="ticker-container">
-    <h2>Ticker</h2>
-    <div id="songtickerli"></div><script src="rabe.js"></script>
-    <noscript><a href="http://www.rabe.ch"><img src="http://test.songticker.li/rabe_gruen.png" style="border:0"/></a></noscript>
-    <a class="popuplink" href="popup.html" target="songtickerli-popup" onclick="return onclick_popup();">^^</a>
-   </div>
-   <div class="box">
-    <h2>Social Web</h2>
-    <!--
-    <div id="sharethis">
-     <script language="javascript" type="text/javascript">
-	SHARETHIS.addEntry({
-		title:'songticker.li',
-		summary:'',
-		url:'http://songticker.li',
-		style: 'rotate'
-	}, {button:true} );
-     </script>
-    </div>
-    -->
-    Noch Fragen? Die kannst du hier stellen<noscript>, wenn du Javascript aktivierst</noscript>.
-    <!--
-    <div id="intensedebate">
-     <script>
-      // intensedebate setup
-      var idcomments_acct = "19bff0961c7661ec5b8c6a8f0ab75df6";
-      var idcomments_post_id;
-      var idcomments_post_url;
-     </script>
-     <span id="IDCommentsPostTitle" style="display:none"></span>
-     <script type='text/javascript' src='http://www.intensedebate.com/js/genericCommentWrapperV2.js' async="async"></script>
-    </div>
-    -->
+<div id="songtickerli" class="frame">
+ <div class="overlay">
+  <div class="artist">some text here</div>
+  <div class="title">more</div>
+  <span class="love button">&lt;3</span>
+  <span class="info button">i</span>
+  <span class="conf button">o</span>
+ </div>
+ <div class="scroller">
+  <div class="scroller-love scrollersub">
+   <div>
+    <p>
+     <textarea name="love-message"></textarea><button name="post-love">love</button>
+    </p>
    </div>
   </div>
-  <div class="left box">
-   <h2>Infos</h2>
-   <p>
-    Auf <b>songtickerli</b> findest du einen 
-    Songticker für das <a href="http://rabe.ch">Radio RaBe</a> in Bern.
-    Der Songticker ist so gestaltet das er sich einfach in 
-    eine bestehende Seite integrieren lässt.
-   </p>
-   <h2>Beispielcode</h2>
-   <h3>Javascript</h3>
-   <div id="jscode">
-    <pre class="code">&lt;script type="text/javascript" src="http://songticker.li/rabe.js"&gt;&lt;/script&gt;<br/>
-&lt;noscript&gt;<br/>
- &lt;a href="http://www.rabe.ch"&gt;&lt;img src="http://songticker.li/rabe_gruen.png"/&gt;&lt;/a&gt;<br/>
-&lt;/noscript&gt;</pre>
+  <ul class="scroller-info scrollersub">
+   <li><a href="last.fm"><img src="Last-fm-logo.png"/></a></li>
+   <li><a href="#"><img src="64px-Wikipedia-logo.png"/></a></li>
+   <li><a href="#"><img src="myspace-logo.png"/></a></li>
+   <li><a href="#"><img src="FaceBook_64x64.png"/></a></li>
+   <li><a href="#"><img src="Twitter_64x64.png"/></a></li>
+  </ul>
+  <div class="scroller-conf scrollersub">
+   <div>
+    <p class="unconfigured">
+     Songtickerli wurde bis jetzt noch nicht konfiguriert. Wenn dir rasch Zeit nimmst
+     daf�r kannst du danach mit dem Herz oben links deine Liebe deinen Freunden kund
+     tun.
+    </p>
+    <p>
+     Username: <input name="username" value="&lt;none&gt;"/>
+    </p>
+    <p>
+    Farbe: 
+   	<input type="radio" name="color" value="blau"/>Blau
+	<input type="radio" name="color" value="gruen"/>Gruen
+	<input type="radio" name="color" value="orange"/>Orange
+	<input type="radio" name="color" value="rot"/>Rot
+    </p>
    </div>
-   <h3>Apache</h3>
-    <pre class="hidden code"><code class="hidden">ProxyPass        /songtickerli http://songticker.li/data/rabe.ch/
-ProxyPassReverse /songtickerli http://songticker.li/data/rabe.ch/
-CacheEnable  mem /songtickerli
-CacheMaxExpire 16</code></pre>
-   <h3>myspace</h3>
-   <h3>facebook</h3>
-   <h3>last.fm</h3>
-   <h2>Lizenz</h2>
-   <p>
-    Falls du den Songticker auf deiner Homepage einbindest, solltest du mindestens 
-    <a href="http://www.rabe.ch/sendungen/sendung-supporten.html">RaBe Supporter</a> sein.
-    Viel schöner wäre es natürlich wenn du ein richtiges Mitglied wirst: 
-    <a href="http://rabe.ch/verein/mitgliedschaft.html">RaBe Mitglied werden</a>.
-   </p>
-   <h2>Copyright</h2>
-   <p class="hidden">
-    2010 - Lucas S. Bickel - hairmare@purplehaze.ch
-   </p>
+   <div>
+    <p class="facebook-btn button">
+     Facebook
+    </p>
+    <p>
+     Twitter
+    </p>
+    <p>
+     MySpace
+    </p>
+    <p>
+     Last.fm
+    </p>
+    <p>
+     Ping.fm
+    </p>
+   </div>
   </div>
-  </div>
- </body>
+ </div>
+</div>
+
+<script>script_token[[[rabe]]]</script>
+
+<div style="display:absolute; margin-left: 500px;">
+Debug: 
+<button onclick="alert(jQuery.jStore.get('username'));">get username</button>
+<button onclick="alert('set to '+jQuery.jStore.set('username', '[none]'));">unset username</button>
+<button onclick="jQuery.jStore.set('configured', 'no'); jQuery.jStore.set('color', 'nil');">unset configured</button>
+</div>
+
 </html>

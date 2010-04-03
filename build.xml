@@ -9,45 +9,36 @@
 		<!-- not implemented ;) -->
 	</target>
 
-	<target name="build" depends="pack-js,flxhr">
-		<copy todir="work" overwrite="true">
-			<fileset dir="htdocs/">
-				<include name="*.html"/>
-				<include name="*.gif"/>
-				<include name="*.png"/>
+	<target name="stage" depends="build">
+		<copy todir="_site" overwrite="true">
+			<fileset dir="work/">
+				<include name="index.html"/>
 				<include name="*.ico"/>
 				<include name="*.xml"/>
 				<include name="songtickerli.js"/>
+				<include name="jquery.js"/>
+				<include name="jquery.json.js"/>
+				<include name="jquery.jstore-all.js"/>
 				<include name="facebook/"/>
 				<include name="opensocial/"/>
 			</fileset>
 		</copy>
 	</target>
 
-	<target name="pack-js">
-		<!-- prep css for inclusion in rabe.js -->
+	<target name="build" depends="jquery,jquery-json,jquery-jstore,fbconnect,images">
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
-				<include name="style_*.css"/>
+				<include name="*.css"/>
 			</fileset>
 			<filterchain>
 				<striplinebreaks/>
 			</filterchain>
 		</copy>
 		<copy todir="work/" overwrite="true">
-			<fileset dir="htdocs/">
+			<fileset dir="htdocs">
 				<include name="*.js"/>
 				<exclude name="songtickerli.js"/>
 			</fileset>
-			<filterchain>
-				<filterreader classname="phing.filters.ReplaceTokensWithFile">
-					<param name="dir"           value="work/"/>
-					<param name="begintoken"    value="ccs_token[[["/>
-					<param name="endtoken"      value="]]]"/>
-					<param name="prefix"        value="style_"/>
-					<param name="postfix"       value=".css" />
-					<param name="translatehtml" value="false"/>
-				</filterreader>
 				<!--
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Numeric"/>
@@ -55,10 +46,41 @@
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
 				-->
+		</copy>
+		<copy todir="work/" overwrite="true">
+			<fileset dir="htdocs/">
+				<include name="*.html"/>
+			</fileset>
+			<filterchain>
+				<filterreader classname="phing.filters.ReplaceTokensWithFile">
+					<param name="dir"           value="work/"/>
+					<param name="begintoken"    value="css_token{"/>
+					<param name="endtoken"      value="}"/>
+					<param name="prefix"        value=""/>
+					<param name="postfix"       value=".css" />
+					<param name="translatehtml" value="false"/>
+				</filterreader>
+				<filterreader classname="phing.filters.ReplaceTokensWithFile">
+					<param name="dir"           value="work/"/>
+					<param name="begintoken"    value="script_token[[["/>
+					<param name="endtoken"      value="]]]"/>
+					<param name="prefix"        value=""/>
+					<param name="postfix"       value=".js" />
+					<param name="translatehtml" value="false"/>
+				</filterreader>
+				<filterreader classname="phing.filters.ReplaceTokensWithFile">
+					<param name="dir"           value="work/"/>
+					<param name="begintoken"    value="png_token[[["/>
+					<param name="endtoken"      value="]]]"/>
+					<param name="prefix"        value=""/>
+					<param name="postfix"       value=".png.txt" />
+					<param name="translatehtml" value="false"/>
+				</filterreader>
 			</filterchain>
 		</copy>
 	</target>
 
+	<!--
 	<target name="flxhr">
 		<untar file="packages/flXHR-1.0.5.tar.gz" todir="temp/"/>
 		<copy todir="work/flensed" overwrite="true">
@@ -67,7 +89,6 @@
 			</fileset>
 		</copy>
 	</target>
-
 	<target name="jxhr">
 		<unzip file="packages/jXHR-0.1.zip" todir="temp/"/>
 		<copy todir="work/jxhr" overwrite="true">
@@ -75,6 +96,54 @@
 				<include name="*min.js"/>
 			</fileset>
 		</copy>
+	</target>
+	-->
+	<target name="jquery">
+		<copy todir="work" overwrite="true">
+			<fileset dir="../jquery/dist/">
+				<include name="*.js"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="jquery-json">
+		<copy todir="work" overwrite="true">
+			<fileset dir="../jquery-json/">
+				<include name="*.js"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="jquery-jstore">
+		<copy todir="work" overwrite="true">
+			<fileset dir="../jquery-jstore/dist/development/">
+				<include name="*.js"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="fbconnect">
+	</target>
+
+	<target name="images">
+		<phingcall target="convert_image">
+			<property name="file"   value="logo_rabe_blau"/>
+			<property name="resize" value="110x150"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file"   value="logo_rabe_gruen_weiss"/>
+			<property name="resize" value="110x150"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file"   value="logo_rabe_orange_weiss"/>
+			<property name="resize" value="110x150"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file"   value="logo_rabe_rot_weiss"/>
+			<property name="resize" value="110x150"/>
+		</phingcall>
+	</target>
+
+	<target name="convert_image">
+		<exec command="convert -transparent white -resize ${resize} packages/rabe/${file}.jpg work/${file}.png"/>
+		<exec command="base64 -w 0 work/${file}.png > work/${file}.png.txt"/>
 	</target>
 
 	<target name="publish" depends="build">
