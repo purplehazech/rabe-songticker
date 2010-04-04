@@ -2,6 +2,7 @@
 	text-align: center;
 	z-index: 1020;
 	font-family: sans-serif;
+	font-size: 80%;
 	color: blue;
 	-moz-border-radius:6px;
 	-webkit-border-radius: 6px;
@@ -36,28 +37,35 @@
 	padding-top: 6px;
 }
 #songtickerli .button {
-	display: block;
-	display: none;
-	position: relative;
-	float: left;
+	position: absolute;
 	cursor: pointer;
 }
 #songtickerli .love {
-	top: -50px;
+	top: 20px;
+	left: 20px;
+	display: none;
 }
 #songtickerli .info {
-	top: -30px;
-	left: -20px;
+	top: 40px;
+	left: 20px;
+	display: none;
+}
+#songtickerli .history {
+	top: 60px;
+	left: 20px;
+	display:none;
 }
 #songtickerli .conf {
-	top: -10px;
-	left: -25px;
+	top: 60px;
+	left: 30px;
+	display: none;
 }
 #songtickerli .scroller {
 	-moz-border-radius:0 0 6px 6px;
 	-webkit-border-radius: 0 0 6px 6px;
 	border-radius: 0 0 6px 6px;
 	clear: both;
+	position: absolute:
 	border: 1px solid #aaa;
 	border-top: none;
 	display: none;
@@ -68,7 +76,8 @@
 	border-left: 1px solid #ddd;
 	margin-left: 6px;
 	margin-right: 4px;
-	margin-top: -7px;
+	margin-top: 9px;
+	padding-bottom: 3px;
 	text-align: left;
 }
 #songtickerli .scroller ul {
@@ -87,7 +96,7 @@
 #songtickerli .scroller div {
 	padding-top: 6px;
 }
-#songtickerli .scroller div div {
+#songtickerli .scroller .scroller-div {
 	margin: 6px 6px 6px 6px;
 	padding: 3px;
 	-moz-border-radius:6px;
@@ -98,4 +107,19 @@
 	border-bottom: 1px solid #aaa;
 	background: white;
 }
-
+#songtickerli .history-data {
+	margin: 6px 6px 6px 6px;
+	padding: 3px;
+	-moz-border-radius:6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	border:1px solid #ddd;
+	border-right: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+	margin-top: 6px;
+	background: white;
+}
+#songtickerli .facebook-btn {
+	display: block;
+	float: none;
+}

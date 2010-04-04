@@ -9,21 +9,23 @@ css_token{style_rabe}
 </style>
 <script src="jquery.js"></script>
 <script src="jquery.json.js"></script>
-<script src="jquery.jstore-all.js"></script>c
+<script src="jquery.jstore-all.js"></script>
 
 <script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script>
 
 <div id="songtickerli" class="frame">
  <div class="overlay">
-  <div class="artist">some text here</div>
-  <div class="title">more</div>
+  <div class="artist"></div>
+  <div class="title"></div>
+  <div class="starttime" style="display:none"></div>
   <span class="love button">&lt;3</span>
   <span class="info button">i</span>
+  <span class="history button">h</span>
   <span class="conf button">o</span>
  </div>
  <div class="scroller">
   <div class="scroller-love scrollersub">
-   <div>
+   <div class="scroller-div">
     <p>
      <textarea name="love-message"></textarea><button name="post-love">love</button>
     </p>
@@ -36,8 +38,10 @@ css_token{style_rabe}
    <li><a href="#"><img src="FaceBook_64x64.png"/></a></li>
    <li><a href="#"><img src="Twitter_64x64.png"/></a></li>
   </ul>
+  <div class="scroller-history scrollersub">
+  </div>
   <div class="scroller-conf scrollersub">
-   <div>
+   <div class="scroller-div">
     <p class="unconfigured">
      Songtickerli wurde bis jetzt noch nicht konfiguriert. Wenn dir rasch Zeit nimmst
      daf√r kannst du danach mit dem Herz oben links deine Liebe deinen Freunden kund
@@ -54,7 +58,7 @@ css_token{style_rabe}
 	<input type="radio" name="color" value="rot"/>Rot
     </p>
    </div>
-   <div>
+   <div class="scroller-div">
     <p class="facebook-btn button">
      Facebook
     </p>

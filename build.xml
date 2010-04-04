@@ -19,6 +19,7 @@
 				<include name="jquery.js"/>
 				<include name="jquery.json.js"/>
 				<include name="jquery.jstore-all.js"/>
+				<include name="fb_xd_receiver.html"/>
 				<include name="facebook/"/>
 				<include name="opensocial/"/>
 			</fileset>
@@ -146,20 +147,13 @@
 		<exec command="base64 -w 0 work/${file}.png > work/${file}.png.txt"/>
 	</target>
 
-	<target name="publish" depends="build">
+	<target name="publish" depends="stage">
 		<!-- takes the current checkout and uses the FileSyncTask from my portage overlay 
 		     to publish it to a location defined in build.properties -->
-		<sync sourcedir="work/"
+		<sync sourcedir="_site/"
 		      destinationdir="${publish.destination}htdocs/"
 		      excludefile="build.publish.exclude"
 		      listonly="false"
 		      verbose="true"/>
-		<chmod mode="744">
-			<fileset dir="${publish.destination}htdocs/">
-				<include name="*.*"/>
-				<include name="flensed/*.*"/>
-				<include name="flxhr/*.*"/>
-			</fileset>
-		</chmod>
 	</target>
 </project>
