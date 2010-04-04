@@ -74,15 +74,19 @@
 	position: relative;
 	z-index: 1010;
 	border-left: 1px solid #ddd;
+	border-right: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
 	margin-left: 6px;
 	margin-right: 4px;
 	margin-top: 9px;
+	margin-bottom: 12px;
 	padding-bottom: 3px;
 	text-align: left;
 }
 #songtickerli .scroller ul {
 	padding-top: 12px;
 	margin-left: -20px;
+	margin-top: 0;
 }
 #songtickerli .scroller ul li {
 	display: inline;
@@ -118,6 +122,12 @@
 	border-bottom: 1px solid #aaa;
 	margin-top: 6px;
 	background: white;
+}
+#songtickerli .history-data:hover {
+	cursor: pointer;
+}
+#songtickerli .history-info {
+	display:none;
 }
 #songtickerli .facebook-btn {
 	display: block;

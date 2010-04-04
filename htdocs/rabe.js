@@ -1,18 +1,31 @@
-var SONGTICKERLI_FB = function() {
-};
+
+/**
+ * prototype for all things facebook
+ */
+var SONGTICKERLI_FB = function() {};
+/**
+ * startup things
+ */
 SONGTICKERLI_FB.init = function() {
+	console.log('initializing fb');
 	FB.init('0b69cbfe795f13e8f415fee381e2d695', 'fb_xd_receiver.html');
 	FB.ensureInit(function() {
 		SONGTICKERLI_FB.initialized = true;
-		if (typeof SONGTICKERLI_FB.registered != 'undefined' || SONGTICKERLI_FB.registered != true) {
+		if (typeof SONGTICKERLI_FB.registered == 'undefined' || SONGTICKERLI_FB.registered != true) {
 			SONGTICKERLI_FB.register();
+		} else {
+			FB.Connect.requireSession();
 		}
 	});
 }
+/**
+ * gets called when storage is ready
+ */
 SONGTICKERLI_FB.jStoreReady = function() {
 	fb_perms = jQuery.jStore.get('facebook_perms');
 	fb_url = jQuery.jStore.get('facebook_url');
 	if (fb_perms != '') {
+		console.log('initializing fb db');
 		$('#songtickerli p.facebook-btn').slideUp();
 		$('#songtickerli a.facebook-profile-btn').hide();
 		SONGTICKERLI_FB.registered = true;
@@ -21,31 +34,61 @@ SONGTICKERLI_FB.jStoreReady = function() {
 		$('#songtickerli a.facebook-profile-btn').show();
 	}
 };
-SONGTICKERLI_FB.post = function(track) {
-	FB.Connect.streamPublish(track.artist + ' ' + track.title);
+/**
+ * send a love message to facebook
+ */
+SONGTICKERLI_FB.love = function(track) {
+	if (track.artist && track.message) {
+		FB.Connect.streamPublish('Auf http://rabe.ch l√uft gerade ' + track.title + ' von ' + track.artist +'. Ein geiler Track!');
+	}
 };
+/**
+ * love button callback
+ *
+ * for when user wanted to add test to love message
+ */
 SONGTICKERLI_FB.post_callback = function() {
 };
+/**
+ * facebook login call
+ */
 SONGTICKERLI_FB.register = function() {
 	FB.Connect.requireSession(SONGTICKERLI_FB.register_callback_ok, SONGTICKERLI_FB.register_callback_cancel);
 };
+/**
+ * get perms
+ */
 SONGTICKERLI_FB.register_callback_ok = function() {
 	FB.Connect.showPermissionDialog('offline_access,publish_stream', SONGTICKERLI_FB.register_callback_perms);
 };
+/**
+ * user abort
+ */
 SONGTICKERLI_FB.register_callback_cancel = function() {
-	$('.facebook-btn').show();
+	$('#songtickerli .facebook-btn').show();
 }
+/**
+ * perms available
+ *
+ * user will have to set them in facebook ui after this
+ */
 SONGTICKERLI_FB.register_callback_perms = function(perms) {
 	if (perms) {
 		jQuery.jStore.set('facebook_perms', perms);
 		jQuery.jStore.set('facebook_username', FB.Connect.get_loggedInUser());
 		jQuery.jStore.set('facebook_url', 'http://www.facebook.com/'+FB.Connect.get_loggedInUser());
-		$('.facebook-btn').hide();
+		$('#songtickerli .facebook-btn').hide();
 		SONGTICKERLI_FB.registered = true;
 	}
 };
 
 var SONGTICKERLI_TWITTER = function() {
+};
+SONGTICKERLI_TWITTER.init = function() {
+	$.get('http://api.twitter.com/oauth/request_token', SONGTICKERLI_TWITTER.init_rtoken);
+};
+SONGTICKERLI_TWITTER.init_rtoken = function(data) {
+	
 };
 SONGTICKERLI_TWITTER.post = function(track) {
 };
@@ -63,7 +106,7 @@ SONGTICKERLI.showLoveDialog = true;
 SONGTICKERLI.observers = [];
 SONGTICKERLI.artist = 'songticker.li';
 SONGTICKERLI.title = 'inializing';
-SONGTICKERLI.messate = null;
+SONGTICKERLI.message = null;
 SONGTICKERLI.starttime = '';
 SONGTICKERLI.delay = 0;
 /**
@@ -77,13 +120,13 @@ SONGTICKERLI.configDataFields = [
  * register an observer 
  */
 SONGTICKERLI.register_observer = function(observer) {
-	SONGTICKERLI.observers[SONGTICKERLI.observers++] = observer;
+	SONGTICKERLI.observers[SONGTICKERLI.observers.length] = observer;
 };
 /**
  * call observers that support the love method
  */
 SONGTICKERLI.observer_love = function(track) {
-	for (var i = 0; i < SONGTICKERLI.observers.length(); i++) {
+	for (var i = 0; i < SONGTICKERLI.observers.length; i++) {
 		if (typeof SONGTICKERLI.observers[i].love == 'function') {
 			SONGTICKERLI.observers[i].love(track);
 		}
@@ -93,7 +136,7 @@ SONGTICKERLI.observer_love = function(track) {
  * call observers that support the jStoreReady method for loading data
  */
 SONGTICKERLI.observer_jStoreReady = function() {
-	for (var i = 0; i < SONGTICKERLI.observers.length(); i++) {
+	for (var i = 0; i < SONGTICKERLI.observers.length; i++) {
 		if (typeof SONGTICKERLI.observers[i].jStoreReady == 'function') {
 			SONGTICKERLI.observers[i].jStoreReady();
 		}
@@ -131,7 +174,7 @@ SONGTICKERLI.main = function() {
  * update the ticker if changes are detected
  */
 SONGTICKERLI.update = function(track) {
-	if (SONGTICKERLI.starttime == $('#songtickerli .starttime').html()) {
+	if (track.starttime == $('#songtickerli .starttime').html()) {
 		return;
 	}
 	// clone old data to history
@@ -143,8 +186,10 @@ SONGTICKERLI.update = function(track) {
 		$('#songtickerli .overlay .title').html(track.title);
 	} else if (track.message) {
 		$('#songtickerli .overlay .artist').html(track.message);
+		$('#songtickerli .overlay .title').html('');
 	} else {
 		$('#songtickerli .overlay .artist').html(track.title);
+		$('#songtickerli .overlay .title').html('');
 	}
 
 	$('#songtickerli .overlay .starttime').html(SONGTICKERLI.starttime);
@@ -153,14 +198,21 @@ SONGTICKERLI.update_history = function() {
 	hist = $('#songtickerli .scroller-history');
 
 	overlay = $('#songtickerli .overlay').clone();
-	overlay.removeClass().addClass('history-data').css('background', 'white');
-	info    = $('#songtickerli .scroller-info').clone();
-	info.removeClass().addClass('history-info').appendTo($(overlay));
-	overlay.hide();
 
 	if ($(overlay).children('.artist').html() == '') {
 		return;
 	}
+
+	overlay.removeClass().addClass('history-data').css('background', 'white');
+	info    = $('#songtickerli .scroller-info').clone();
+	info.removeClass().addClass('history-info').appendTo($(overlay));
+	overlay.hide();
+	overlay.mouseleave(function() {
+		$(this).children('.history-info').slideUp();
+	});
+	overlay.click(function() {
+		$(this).children('.history-info').slideDown();
+	});
 
 	hist.prepend(overlay);
 	overlay.slideDown();
@@ -316,9 +368,9 @@ jQuery(document).ready(function() {
 		SONGTICKERLI_FB.init();
 	});
 	
-	jQuery.jStore.load();
 	SONGTICKERLI.register_observer(SONGTICKERLI_FB);
 	SONGTICKERLI.register_observer(SONGTICKERLI_TWITTER);
+	jQuery.jStore.load();
 	SONGTICKERLI.main();
 });
 

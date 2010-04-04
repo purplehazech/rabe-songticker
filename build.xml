@@ -36,6 +36,11 @@
 			</filterchain>
 		</copy>
 		<copy todir="work/" overwrite="true">
+			<fileset dir="htdocs/">
+				<include name="*.png"/>
+			</fileset>
+		</copy>
+		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs">
 				<include name="*.js"/>
 				<exclude name="songtickerli.js"/>
@@ -140,10 +145,19 @@
 			<property name="file"   value="logo_rabe_rot_weiss"/>
 			<property name="resize" value="110x150"/>
 		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="wikipedia_logo_64"/>
+		</phingcall>
 	</target>
 
 	<target name="convert_image">
-		<exec command="convert -transparent white -resize ${resize} packages/rabe/${file}.jpg work/${file}.png"/>
+		<if>
+			<equals arg1="${resize}" arg2=""/>
+			<then/>
+			<else>
+				<exec command="convert -transparent white -resize ${resize} packages/rabe/${file}.jpg work/${file}.png"/>
+			</else>
+		</if>
 		<exec command="base64 -w 0 work/${file}.png > work/${file}.png.txt"/>
 	</target>
 

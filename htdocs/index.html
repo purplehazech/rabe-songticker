@@ -3,7 +3,7 @@
 
 <style>
 body {
-background:black;
+background: white;
 }
 css_token{style_rabe}
 </style>
@@ -33,7 +33,7 @@ css_token{style_rabe}
   </div>
   <ul class="scroller-info scrollersub">
    <li><a href="last.fm"><img src="Last-fm-logo.png"/></a></li>
-   <li><a href="#"><img src="64px-Wikipedia-logo.png"/></a></li>
+   <li><a href="#"><img src="data:image/png;base64,png_token[[[wikipedia_logo_64]]]"/></a></li>
    <li><a href="#"><img src="myspace-logo.png"/></a></li>
    <li><a href="#"><img src="FaceBook_64x64.png"/></a></li>
    <li><a href="#"><img src="Twitter_64x64.png"/></a></li>
@@ -59,9 +59,7 @@ css_token{style_rabe}
     </p>
    </div>
    <div class="scroller-div">
-    <p class="facebook-btn button">
-     Facebook
-    </p>
+    <p class="facebook-btn">Facebook</p>
     <p>
      Twitter
     </p>
@@ -86,6 +84,8 @@ Debug:
 <button onclick="alert(jQuery.jStore.get('username'));">get username</button>
 <button onclick="alert('set to '+jQuery.jStore.set('username', '[none]'));">unset username</button>
 <button onclick="jQuery.jStore.set('configured', 'no'); jQuery.jStore.set('color', 'nil');">unset configured</button>
+<button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'be bop a song ticka', starttime: ''});">update blah</button>
+<button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'songtickah blues', starttime: '100'});">update blah</button>
 </div>
 
 </html>
