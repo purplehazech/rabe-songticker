@@ -109,6 +109,8 @@ SONGTICKERLI.title = 'inializing';
 SONGTICKERLI.message = null;
 SONGTICKERLI.starttime = '';
 SONGTICKERLI.delay = 0;
+SONGTICKERLI.artist_info = [];
+SONGTICKERLI.artist_info['Lucas Bickel'] = {wikipedia: 'Lucas Bickel'};
 /**
  * an array for defining some basic setting fields to load
  */
@@ -191,6 +193,7 @@ SONGTICKERLI.update = function(track) {
 		$('#songtickerli .overlay .artist').html(track.title);
 		$('#songtickerli .overlay .title').html('');
 	}
+	SONGTICKERLI.update_infodisplay(track);
 
 	$('#songtickerli .overlay .starttime').html(SONGTICKERLI.starttime);
 };
@@ -217,6 +220,37 @@ SONGTICKERLI.update_history = function() {
 	hist.prepend(overlay);
 	overlay.slideDown();
 	$('#songtickerli .scroller-history .button').remove();
+};
+SONGTICKERLI.update_infodisplay = function(track) {
+	data = SONGTICKERLI.artist_info[track.artist];
+	if (typeof data == 'undefined') {
+		return;
+	}
+	if (data.lastfm) {
+		$('#songtickerli .lastfm-link').attr('href', data.lastfm).fadeIn();
+	} else {
+		$('#songtickerli .lastfm-link').fadeOut();
+	}
+	if (data.wikipedia) {
+		$('#songtickerli .wikipedia-link').attr('href', data.wikipedia).fadeIn();
+	} else {
+		$('#songtickerli .wikipedia-link').fadeOut();
+	}
+	if (data.myspace) {
+		$('#songtickerli .myspace-link').attr('href', data.myspace).fadeIn();
+	} else {
+		$('#songtickerli .myspace-link').fadeOut();
+	}
+	if (data.facebook) {
+		$('#songtickerli .facebook-link').attr('href', data.wikipedia).fadeIn();
+	} else {
+		$('#songtickerli .facebook-link').fadeOut();
+	}
+	if (data.twitter) {
+		$('#songtickerli .twitter-link').attr('href', data.twitter).fadeIn();
+	} else {
+		$('#songtickerli .twitter-link').fadeOut();
+	}
 };
 SONGTICKERLI.love_track = function(current) {
 	if (!SONGTICKERLI.configured()) {

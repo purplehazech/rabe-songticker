@@ -83,6 +83,9 @@
 	padding-bottom: 3px;
 	text-align: left;
 }
+#songtickerli .w2info {
+	display:none;
+}
 #songtickerli .scroller ul {
 	padding-top: 12px;
 	margin-left: -20px;

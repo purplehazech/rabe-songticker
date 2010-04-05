@@ -26,7 +26,7 @@
 		</copy>
 	</target>
 
-	<target name="build" depends="jquery,jquery-json,jquery-jstore,fbconnect,images">
+	<target name="build" depends="jquery,jquery-json,jquery-jstore,fbconnect,artistdb,images">
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.css"/>
@@ -128,6 +128,11 @@
 	<target name="fbconnect">
 	</target>
 
+	<target name="artistdb">
+		<exec command="wget '${artistdb.spreadsheet}' -O work/artistdb.csv"/>
+		<exec command="sed -e 's|^././.... ..:..:..|&quot;|g' -e 's/$/,&quot;/' work/artistdb.csv | awk -F '&quot;,&quot;' -f scripts/artistdb.csv | tail -n+2 > work/artistdb.js"/>
+	</target>
+
 	<target name="images">
 		<phingcall target="convert_image">
 			<property name="file"   value="logo_rabe_blau"/>
@@ -147,6 +152,18 @@
 		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file" value="wikipedia_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="lastfm_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="myspace_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="facebook_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="twitter_logo_64"/>
 		</phingcall>
 	</target>
 
