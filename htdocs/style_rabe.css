@@ -37,27 +37,27 @@
 	padding-top: 6px;
 }
 #songtickerli .button {
-	position: absolute;
+	position: relative;
 	cursor: pointer;
 }
 #songtickerli .love {
-	top: 20px;
-	left: 20px;
+	left: -120px;
+	top: -35px;
 	display: none;
 }
 #songtickerli .info {
-	top: 40px;
-	left: 20px;
+	left: -135px;
+	top: -15px;
 	display: none;
 }
 #songtickerli .history {
-	top: 60px;
-	left: 20px;
+	left: -143px;
+	top: 5px;
 	display:none;
 }
 #songtickerli .conf {
-	top: 60px;
-	left: 30px;
+	left: -140px;
+	top: 5px;
 	display: none;
 }
 #songtickerli .scroller {

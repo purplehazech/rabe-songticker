@@ -7,7 +7,7 @@ var SONGTICKERLI_FB = function() {};
  * startup things
  */
 SONGTICKERLI_FB.init = function() {
-	console.log('initializing fb');
+	//console.log('initializing fb');
 	FB.init('0b69cbfe795f13e8f415fee381e2d695', 'fb_xd_receiver.html');
 	FB.ensureInit(function() {
 		SONGTICKERLI_FB.initialized = true;
@@ -17,7 +17,7 @@ SONGTICKERLI_FB.init = function() {
 			FB.Connect.requireSession();
 		}
 	});
-}
+};
 /**
  * gets called when storage is ready
  */
@@ -25,21 +25,21 @@ SONGTICKERLI_FB.jStoreReady = function() {
 	fb_perms = jQuery.jStore.get('facebook_perms');
 	fb_url = jQuery.jStore.get('facebook_url');
 	if (fb_perms != '') {
-		console.log('initializing fb db');
-		$('#songtickerli p.facebook-btn').slideUp();
-		$('#songtickerli a.facebook-profile-btn').hide();
+		//console.log('initializing fb db');
+		$('#songtickerli .facebook-btn').hide();
+		$('#songtickerli .facebook-profile-btn').show().attr('href', fb_url);
 		SONGTICKERLI_FB.registered = true;
 		SONGTICKERLI_FB.init();
 	} else {
-		$('#songtickerli a.facebook-profile-btn').show();
+		$('#songtickerli .facebook-btn').hide();
 	}
 };
 /**
  * send a love message to facebook
  */
 SONGTICKERLI_FB.love = function(track) {
-	if (track.artist && track.message) {
-		FB.Connect.streamPublish('Auf http://rabe.ch l√uft gerade ' + track.title + ' von ' + track.artist +'. Ein geiler Track!');
+	if (track.artist && track.title) {
+		FB.Connect.streamPublish('Auf http://rabe.ch l√§uft gerade ' + track.title + ' von ' + track.artist +'. Ein geiler Track!');
 	}
 };
 /**
@@ -66,7 +66,7 @@ SONGTICKERLI_FB.register_callback_ok = function() {
  */
 SONGTICKERLI_FB.register_callback_cancel = function() {
 	$('#songtickerli .facebook-btn').show();
-}
+};
 /**
  * perms available
  *
@@ -102,7 +102,7 @@ SONGTICKERLI_TWITTER.post = function(track) {
 var SONGTICKERLI = function() {
 	var storageReady = false;
 };
-SONGTICKERLI.showLoveDialog = true;
+SONGTICKERLI.showLoveDialog = false;
 SONGTICKERLI.observers = [];
 SONGTICKERLI.artist = 'songticker.li';
 SONGTICKERLI.title = 'inializing';
@@ -188,10 +188,10 @@ SONGTICKERLI.update = function(track) {
 		$('#songtickerli .overlay .title').html(track.title);
 	} else if (track.message) {
 		$('#songtickerli .overlay .artist').html(track.message);
-		$('#songtickerli .overlay .title').html('');
+		$('#songtickerli .overlay .title').html('Radio RaBe 95.6 MHz');
 	} else {
 		$('#songtickerli .overlay .artist').html(track.title);
-		$('#songtickerli .overlay .title').html('');
+		$('#songtickerli .overlay .title').html('Radio RaBe 95.6 MHz');
 	}
 	SONGTICKERLI.update_infodisplay(track);
 
@@ -202,7 +202,7 @@ SONGTICKERLI.update_history = function() {
 
 	overlay = $('#songtickerli .overlay').clone();
 
-	if ($(overlay).children('.artist').html() == '') {
+	if ($(overlay).children('.artist').html() == '' || $(overlay).children('.artist').html() == 'songticker.li') {
 		return;
 	}
 
@@ -227,36 +227,41 @@ SONGTICKERLI.update_infodisplay = function(track) {
 		return;
 	}
 	if (data.lastfm) {
-		$('#songtickerli .lastfm-link').attr('href', data.lastfm).fadeIn();
+		$('#songtickerli .lastfm-link').attr('href', data.lastfm).show();
 	} else {
-		$('#songtickerli .lastfm-link').fadeOut();
+		$('#songtickerli .lastfm-link').hide();
 	}
 	if (data.wikipedia) {
-		$('#songtickerli .wikipedia-link').attr('href', data.wikipedia).fadeIn();
+		$('#songtickerli .wikipedia-link').attr('href', data.wikipedia).show();
 	} else {
-		$('#songtickerli .wikipedia-link').fadeOut();
+		$('#songtickerli .wikipedia-link').hide();
 	}
 	if (data.myspace) {
-		$('#songtickerli .myspace-link').attr('href', data.myspace).fadeIn();
+		$('#songtickerli .myspace-link').attr('href', data.myspace).show();
 	} else {
-		$('#songtickerli .myspace-link').fadeOut();
+		$('#songtickerli .myspace-link').hide();
 	}
 	if (data.facebook) {
-		$('#songtickerli .facebook-link').attr('href', data.wikipedia).fadeIn();
+		$('#songtickerli .-link').attr('href', data.facebook).show();
 	} else {
-		$('#songtickerli .facebook-link').fadeOut();
+		$('#songtickerli .facebook-link').hide();
 	}
 	if (data.twitter) {
-		$('#songtickerli .twitter-link').attr('href', data.twitter).fadeIn();
+		$('#songtickerli .twitter-link').attr('href', data.twitter).show();
 	} else {
-		$('#songtickerli .twitter-link').fadeOut();
+		$('#songtickerli .twitter-link').hide();
+	}
+	if (data.discogs) {
+		$('#songtickerli .discogs-link').attr('href', data.discogs).show();
+	} else {
+		$('#songtickerli .discogs-link').hide();
 	}
 };
 SONGTICKERLI.love_track = function(current) {
 	if (!SONGTICKERLI.configured()) {
 		SONGTICKERLI.show($('#songtickerli .scroller-conf'));
 	}
-	if (typeof SONGTICKERLI.showLoveDialog == 'undefined' || SONGTICKERLI.showLoveDialog) {
+	if (typeof SONGTICKERLI.showLoveDialog == 'undefined' || SONGTICKERLI.showLoveDialog == true) {
 		SONGTICKERLI.show($('#songtickerli .scroller-love'));
 	} else {
 		SONGTICKERLI.observer_love(SONGTICKERLI.current_track());
@@ -346,7 +351,7 @@ SONGTICKERLI.get_colorset = function(color) {
 			logo: 'data:image/png;base64,png_token[[[logo_rabe_blau]]]'
 		}
 	}
-}
+};
 
 jQuery.extend(jQuery.jStore.defaults, {  
 	project: 'songtickerli',
@@ -369,7 +374,7 @@ jQuery.jStore.ready(function(engine){
 		data = SONGTICKERLI.configDataFields[i];
 		$(data.field).val(jQuery.jStore.get(data.name));
 	}
-})
+});
 
 jQuery(document).ready(function() {
 
@@ -382,7 +387,9 @@ jQuery(document).ready(function() {
 	$('#songtickerli .love').click(function() {
 		SONGTICKERLI.love_track(SONGTICKERLI.current_track());
 	});
-	$('#songtickerli button[name=post-love]').click(SONGTICKERLI.love_track_okcallback);
+	$('#songtickerli button[name=post-love]').click(function() {
+		SONGTICKERLI.love_track_okcallback();
+	});
 	$('#songtickerli .info').click(function() {
 		SONGTICKERLI.show($('#songtickerli .scroller-info'));
 	});

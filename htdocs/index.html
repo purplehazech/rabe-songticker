@@ -4,6 +4,7 @@
 <style>
 body {
 background: white;
+text-align: center;
 }
 css_token{style_rabe}
 </style>
@@ -13,10 +14,11 @@ css_token{style_rabe}
 
 <script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script>
 
+<div align="center"
 <div id="songtickerli" class="frame">
  <div class="overlay">
-  <div class="artist"></div>
-  <div class="title"></div>
+  <div class="artist">songticker.li</div>
+  <div class="title">lade ticker daten</div>
   <div class="starttime" style="display:none"></div>
   <span class="love button">&lt;3</span>
   <span class="info button">i</span>
@@ -32,11 +34,12 @@ css_token{style_rabe}
    </div>
   </div>
   <ul class="scroller-info scrollersub">
-   <li><a class="w2info wikipedia-link" href="#"><img src="data:image/png;base64,png_token[[[wikipedia_logo_64]]]"/></a></li>
-   <li><a class="w2info myspace-link"   href="#"><img src="data:image/png;base64,png_token[[[myspace_logo_64]]]"/></a></li>
-   <li><a class="w2info lastfm-link"    href="#"><img src="data:image/png;base64,png_token[[[lastfm_logo_64]]]"/></a></li>
-   <li><a class="w2info twitter-link"   href="#"><img src="data:image/png;base64,png_token[[[twitter_logo_64]]]"/></a></li>
-   <li><a class="w2info facebook-link"  href="#"><img src="data:image/png;base64,png_token[[[facebook_logo_64]]]"/></a></li>
+   <li><a class="w2info wikipedia-link" href="#" target="_new"><img src="data:image/png;base64,png_token[[[wikipedia_logo_64]]]"/></a></li>
+   <li><a class="w2info myspace-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[myspace_logo_64]]]"/></a></li>
+   <li><a class="w2info lastfm-link"    href="#" target="_new"><img src="data:image/png;base64,png_token[[[lastfm_logo_64]]]"/></a></li>
+   <li><a class="w2info twitter-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[twitter_logo_64]]]"/></a></li>
+   <li><a class="w2info facebook-link"  href="#" target="_new"><img src="data:image/png;base64,png_token[[[facebook_logo_64]]]"/></a></li>
+   <li><a class="w2info discogs-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[discogs_logo_64]]]"/></a></li>
   </ul>
   <div class="scroller-history scrollersub">
   </div>
@@ -44,7 +47,7 @@ css_token{style_rabe}
    <div class="scroller-div">
     <p class="unconfigured">
      Songtickerli wurde bis jetzt noch nicht konfiguriert. Wenn dir rasch Zeit nimmst
-     daf√r kannst du danach mit dem Herz oben links deine Liebe deinen Freunden kund
+     daf&uuml;r kannst du danach mit dem Herz oben links deine Liebe deinen Freunden kund
      tun.
     </p>
     <p>
@@ -53,13 +56,18 @@ css_token{style_rabe}
     <p>
     Farbe: 
    	<input type="radio" name="color" value="blau"/>Blau
-	<input type="radio" name="color" value="gruen"/>Gruen
+	<input type="radio" name="color" value="gruen"/>Gr&uuml;n
 	<input type="radio" name="color" value="orange"/>Orange
 	<input type="radio" name="color" value="rot"/>Rot
     </p>
    </div>
    <div class="scroller-div">
-    <p class="facebook-btn">Facebook</p>
+    <a class="facebook-btn" href="#"><img src="data:image/png;base64,png_token[[[facebook_connect]]]" border="0"/></a>
+    <!--
+    <div class="facebook-gui">
+     <a href="#" class="facebook-rabe-friend">RaBe Friend-Request senden</a><br/>
+     <a href="#" class="facebook-songtickerli-fan">Songtickerli Fan werden</a>
+    </div>
     <p>
      Twitter
     </p>
@@ -72,16 +80,24 @@ css_token{style_rabe}
     <p>
      Ping.fm
     </p>
+    -->
    </div>
    <div class="scroller-div">
     songtickerli braucht dich! <a target="_new" href="http://spreadsheets.google.com/viewform?formkey=dERhbjJFY0xqV19VSlRZWXRyOFJxN2c6MA">erfasse artist infos</a>
+    <!--
+    <hr/>
+    <a href="#" class="songtickerli-infodisplay">weitere Infos</a>
+    -->
    </div>
   </div>
  </div>
 </div>
 
+</div>
+
 <script>script_token[[[rabe]]]</script>
 <script>script_token[[[artistdb]]]</script>
+<!--
 <div style="display:absolute; margin-left: 500px;">
 Debug: 
 <button onclick="alert(jQuery.jStore.get('username'));">get username</button>
@@ -90,5 +106,6 @@ Debug:
 <button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'be bop a song ticka', starttime: ''});">update blah</button>
 <button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'songtickah blues', starttime: '100'});">update blah</button>
 </div>
+-->
 
 </html>

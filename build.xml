@@ -26,7 +26,7 @@
 		</copy>
 	</target>
 
-	<target name="build" depends="jquery,jquery-json,jquery-jstore,fbconnect,artistdb,images">
+	<target name="build" depends="jquery,jquery-json,jquery-jstore,fbconnect,fbapp,artistdb,images">
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.css"/>
@@ -45,13 +45,21 @@
 				<include name="*.js"/>
 				<exclude name="songtickerli.js"/>
 			</fileset>
-				<!--
+			<filterchain>
+				<filterreader classname="phing.filters.ReplaceTokensWithFile">
+					<param name="dir"           value="work/"/>
+					<param name="begintoken"    value="png_token[[["/>
+					<param name="endtoken"      value="]]]"/>
+					<param name="prefix"        value=""/>
+					<param name="postfix"       value=".png.txt" />
+					<param name="translatehtml" value="false"/>
+				</filterreader>
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Numeric"/>
 					<param name="fastDecode" value="true"/>
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
-				-->
+			</filterchain>
 		</copy>
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
@@ -84,6 +92,7 @@
 				</filterreader>
 			</filterchain>
 		</copy>
+		<exec command="sed --in-place -f scripts/strip_html.sed work/index.html"/>
 	</target>
 
 	<!--
@@ -125,7 +134,25 @@
 			</fileset>
 		</copy>
 	</target>
+
 	<target name="fbconnect">
+	</target>
+	<target name="fbapp">
+		<copy todir="work/facebook" overwrite="true">
+			<fileset dir="htdocs/facebook">
+				<include name="index.html"/>
+			</fileset>
+			<filterchain>
+				<filterreader classname="phing.filters.ReplaceTokensWithFile">
+					<param name="dir"           value="work/"/>
+					<param name="begintoken"    value="png_token[[["/>
+					<param name="endtoken"      value="]]]"/>
+					<param name="prefix"        value=""/>
+					<param name="postfix"       value=".png.txt" />
+					<param name="translatehtml" value="false"/>
+				</filterreader>
+			</filterchain>
+		</copy>
 	</target>
 
 	<target name="artistdb">
@@ -136,19 +163,19 @@
 	<target name="images">
 		<phingcall target="convert_image">
 			<property name="file"   value="logo_rabe_blau"/>
-			<property name="resize" value="110x150"/>
+			<property name="resize" value="111x150"/>
 		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file"   value="logo_rabe_gruen_weiss"/>
-			<property name="resize" value="110x150"/>
+			<property name="resize" value="111x150"/>
 		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file"   value="logo_rabe_orange_weiss"/>
-			<property name="resize" value="110x150"/>
+			<property name="resize" value="111x150"/>
 		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file"   value="logo_rabe_rot_weiss"/>
-			<property name="resize" value="110x150"/>
+			<property name="resize" value="111x150"/>
 		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file" value="wikipedia_logo_64"/>
@@ -164,6 +191,12 @@
 		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file" value="twitter_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="discogs_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="facebook_connect"/>
 		</phingcall>
 	</target>
 
