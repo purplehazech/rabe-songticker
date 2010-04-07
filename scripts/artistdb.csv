@@ -1,5 +1,5 @@
 {
-	printf "SONGTICKERLI.artist_info['"$2"'] = {"
+	printf "SONGTICKERLI.artist_info['"tolower($2)"'] = {"
 	if ($3 != "") {
 		printf "web: '"$3"', "
 	}

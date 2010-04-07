@@ -62,6 +62,11 @@
 			</filterchain>
 		</copy>
 		<copy todir="work/" overwrite="true">
+			<fileset dir="work">
+				<include name="artistdb.js"/>
+			</fileset>
+		</copy>
+		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.html"/>
 			</fileset>
@@ -157,10 +162,22 @@
 
 	<target name="artistdb">
 		<exec command="wget '${artistdb.spreadsheet}' -O work/artistdb.csv"/>
-		<exec command="sed -e 's|^././.... ..:..:..|&quot;|g' -e 's/$/,&quot;/' work/artistdb.csv | awk -F '&quot;,&quot;' -f scripts/artistdb.csv | tail -n+2 > work/artistdb.js"/>
+		<exec command="sed -e 's|^././.... ..:..:..|&quot;|g' -e 's/$/,&quot;/' work/artistdb.csv | awk -F '&quot;,&quot;' -f scripts/artistdb.csv | tail -n+2 > work/artistdb-raw.js"/>
+
+		<move file="work/artistdb-raw.js" tofile="work/artistdb.js">
+			<filterchain>
+				<filterreader classname="phing.filters.JSPackerFilter">
+					<param name="encoding" value="Numeric"/>
+					<param name="fastDecode" value="true"/>
+					<param name="specialCharacters" value="false"/>
+				</filterreader>
+			</filterchain>
+		</move>
 	</target>
 
 	<target name="images">
+		<property name="source" value=""/>
+		<property name="resize" value=""/>
 		<phingcall target="convert_image">
 			<property name="file"   value="logo_rabe_blau"/>
 			<property name="resize" value="111x150"/>
@@ -178,21 +195,29 @@
 			<property name="resize" value="111x150"/>
 		</phingcall>
 		<phingcall target="convert_image">
+			<property name="file" value="website_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
 			<property name="file" value="wikipedia_logo_64"/>
 		</phingcall>
 		<phingcall target="convert_image">
+			<property name="source" value="lastfm_64_0.png"/>
 			<property name="file" value="lastfm_logo_64"/>
 		</phingcall>
 		<phingcall target="convert_image">
+			<property name="source" value="myspace_64_0.png"/>
 			<property name="file" value="myspace_logo_64"/>
 		</phingcall>
 		<phingcall target="convert_image">
+			<property name="source" value="facebook_64_0.png"/>
 			<property name="file" value="facebook_logo_64"/>
 		</phingcall>
 		<phingcall target="convert_image">
+			<property name="source" value="twitter_64_0.png"/>
 			<property name="file" value="twitter_logo_64"/>
 		</phingcall>
 		<phingcall target="convert_image">
+			<property name="source" value="discogs_64_0.png"/>
 			<property name="file" value="discogs_logo_64"/>
 		</phingcall>
 		<phingcall target="convert_image">
@@ -201,6 +226,14 @@
 	</target>
 
 	<target name="convert_image">
+		<if>
+			<equals arg1="${source}" arg2=""/>
+			<then/>
+			<else>
+				<exec command="unzip -u packages/find_me_on_icons_style_0.zip 'style 0/${source}'"/>
+				<exec command="mv 'style 0/${source}' work/${file}.png" />
+			</else>
+		</if>
 		<if>
 			<equals arg1="${resize}" arg2=""/>
 			<then/>

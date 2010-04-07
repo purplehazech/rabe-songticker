@@ -17,6 +17,16 @@
 	padding-right: 100px;
 	padding-top: 9px;
 }
+#songtickerli .station-link {
+	position: relative;
+	height: 66px;
+	left: 310px;
+	top: -65px;
+	width: 80px;
+}
+#songtickerli .station-link:hover {
+	cursor: pointer;
+}
 #songtickerli .overlay {
 	-moz-border-radius:6px;
 	-webkit-border-radius: 6px;
@@ -72,6 +82,7 @@
 	background: rgba(200, 200, 255, 0.5);
 	width: 385px;
 	position: relative;
+	top: -66px;
 	z-index: 1010;
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #aaa;

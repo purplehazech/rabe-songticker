@@ -45,7 +45,7 @@ SONGTICKERLI_FB.love = function(track) {
 /**
  * love button callback
  *
- * for when user wanted to add test to love message
+ * for when user wanted to add text to love message
  */
 SONGTICKERLI_FB.post_callback = function() {
 };
@@ -79,6 +79,8 @@ SONGTICKERLI_FB.register_callback_perms = function(perms) {
 		jQuery.jStore.set('facebook_url', 'http://www.facebook.com/'+FB.Connect.get_loggedInUser());
 		$('#songtickerli .facebook-btn').hide();
 		SONGTICKERLI_FB.registered = true;
+	} else {
+		$('#songtickerli .facebook-btn').show();
 	}
 };
 
@@ -110,7 +112,6 @@ SONGTICKERLI.message = null;
 SONGTICKERLI.starttime = '';
 SONGTICKERLI.delay = 0;
 SONGTICKERLI.artist_info = [];
-SONGTICKERLI.artist_info['Lucas Bickel'] = {wikipedia: 'Lucas Bickel'};
 /**
  * an array for defining some basic setting fields to load
  */
@@ -206,10 +207,9 @@ SONGTICKERLI.update_history = function() {
 		return;
 	}
 
-	overlay.removeClass().addClass('history-data').css('background', 'white');
+	overlay.removeClass().addClass('history-data').css('background', 'white').hide();
 	info    = $('#songtickerli .scroller-info').clone();
-	info.removeClass().addClass('history-info').appendTo($(overlay));
-	overlay.hide();
+	info.removeClass().addClass('history-info').appendTo($(overlay)).hide();
 	overlay.mouseleave(function() {
 		$(this).children('.history-info').slideUp();
 	});
@@ -222,39 +222,37 @@ SONGTICKERLI.update_history = function() {
 	$('#songtickerli .scroller-history .button').remove();
 };
 SONGTICKERLI.update_infodisplay = function(track) {
-	data = SONGTICKERLI.artist_info[track.artist];
+	data = SONGTICKERLI.artist_info[track.artist.toLowerCase()];
 	if (typeof data == 'undefined') {
+		$('#songtickerli .scroller-info .w2info').hide();
 		return;
 	}
+	if (data.web) {
+		$('#songtickerli .scroller-info .web-link').attr('href', data.web).show();
+	}
+	$('#songtickerli .scroller-info .lastfm-link').hide();
 	if (data.lastfm) {
-		$('#songtickerli .lastfm-link').attr('href', data.lastfm).show();
-	} else {
-		$('#songtickerli .lastfm-link').hide();
+		$('#songtickerli .scroller-info .lastfm-link').attr('href', data.lastfm).show();
 	}
+	$('#songtickerli .scroller-info .wikipedia-link').hide();
 	if (data.wikipedia) {
-		$('#songtickerli .wikipedia-link').attr('href', data.wikipedia).show();
-	} else {
-		$('#songtickerli .wikipedia-link').hide();
+		$('#songtickerli .scroller-info .wikipedia-link').attr('href', data.wikipedia).show();
 	}
+	$('#songtickerli .scroller-info .myspace-link').hide();
 	if (data.myspace) {
-		$('#songtickerli .myspace-link').attr('href', data.myspace).show();
-	} else {
-		$('#songtickerli .myspace-link').hide();
+		$('#songtickerli .scroller-info .myspace-link').attr('href', data.myspace).show();
 	}
+	$('#songtickerli .scroller-info .facebook-link').hide();
 	if (data.facebook) {
-		$('#songtickerli .-link').attr('href', data.facebook).show();
-	} else {
-		$('#songtickerli .facebook-link').hide();
+		$('#songtickerli .scroller-info .facebook-link').attr('href', data.facebook).show();
 	}
+	$('#songtickerli .scroller-info .twitter-link').hide();
 	if (data.twitter) {
-		$('#songtickerli .twitter-link').attr('href', data.twitter).show();
-	} else {
-		$('#songtickerli .twitter-link').hide();
+		$('#songtickerli .scroller-info .twitter-link').attr('href', data.twitter).show();
 	}
+	$('#songtickerli .scroller-info .discogs-link').hide();
 	if (data.discogs) {
-		$('#songtickerli .discogs-link').attr('href', data.discogs).show();
-	} else {
-		$('#songtickerli .discogs-link').hide();
+		$('#songtickerli .scroller-info .discogs-link').attr('href', data.discogs).show();
 	}
 };
 SONGTICKERLI.love_track = function(current) {
@@ -407,6 +405,9 @@ jQuery(document).ready(function() {
 	});
 	$('#songtickerli p.facebook-btn').click(function() {
 		SONGTICKERLI_FB.init();
+	});
+	$('#songtickerli .station-link').click(function() {
+		window.open('http://www.rabe.ch');
 	});
 	
 	SONGTICKERLI.register_observer(SONGTICKERLI_FB);
