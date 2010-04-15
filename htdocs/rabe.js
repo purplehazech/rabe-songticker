@@ -3,12 +3,20 @@
  * prototype for all things facebook
  */
 var SONGTICKERLI_FB = function() {};
+SONGTICKERLI_FB.apikey = '0b69cbfe795f13e8f415fee381e2d695';
+SONGTICKERLI_FB.api = null;
+/**
+ * songtickerlis uid for becominig friend
+ */
+SONGTICKERLI_FB.songtickerli_uid = 287570953869;
+
+SONGTICKERLI_FB.rabe_gid = 738409024;
 /**
  * startup things
  */
 SONGTICKERLI_FB.init = function() {
 	//console.log('initializing fb');
-	FB.init('0b69cbfe795f13e8f415fee381e2d695', 'fb_xd_receiver.html');
+	FB.init(SONGTICKERLI_FB.apikey, 'fb_xd_receiver.html');
 	FB.ensureInit(function() {
 		SONGTICKERLI_FB.initialized = true;
 		if (typeof SONGTICKERLI_FB.registered == 'undefined' || SONGTICKERLI_FB.registered != true) {
@@ -16,6 +24,16 @@ SONGTICKERLI_FB.init = function() {
 		} else {
 			FB.Connect.requireSession();
 		}
+		SONGTICKERLI_FB.api = FB.ApiClient(SONGTICKERLI_FB.apikey);
+		me = FB.Connect.get_loggedInUser();
+		// check for songtickerli friendship
+		SONGTICKERLI_FB.api.friends_areFriends(SONGTICKERLI_FB.songtickerli_uid, me, function() {
+			$('#songtickerli .facebook-friendbutton-'+SONGTICKERLI_FB.songtickerli_uid).hide();
+		});
+		// check for rabe group membership
+		SONGTICKERLI_FB.api.groups_get(me, SONGTICKERLI_FB.rabe_gid, function() {
+			$('#songtickerli .facebook-groupbutton-'+SONGTICKERLI_FB.rabe_gid).hide();
+		});
 	});
 };
 /**
@@ -82,6 +100,14 @@ SONGTICKERLI_FB.register_callback_perms = function(perms) {
 	} else {
 		$('#songtickerli .facebook-btn').show();
 	}
+};
+SONGTICKERLI_FB.add_friend = function(friend) {
+	FB.Connect.showAddFriendDialog(friend, function() {
+		alert(this.value);
+		if (this.value) {
+			// hide button
+		}
+	});
 };
 
 var SONGTICKERLI_TWITTER = function() {
@@ -207,6 +233,10 @@ SONGTICKERLI.update_history = function() {
 		return;
 	}
 
+	if (hist.children('.history-data').length >= 3) {
+		SONGTICKERLI.reduce_history();
+	}
+
 	overlay.removeClass().addClass('history-data').css('background', 'white').hide();
 	info    = $('#songtickerli .scroller-info').clone();
 	info.removeClass().addClass('history-info').appendTo($(overlay)).hide();
@@ -220,6 +250,63 @@ SONGTICKERLI.update_history = function() {
 	hist.prepend(overlay);
 	overlay.slideDown();
 	$('#songtickerli .scroller-history .button').remove();
+};
+SONGTICKERLI.get_date = function(format) {
+	d = new Date();
+	if (typeof format == 'undefined') {
+		date = d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear()
+	} else if (format == 'class') {
+		date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()
+	}
+	return date;
+};
+SONGTICKERLI.reduce_history = function() {
+	// check for todays history elm
+	today = SONGTICKERLI.get_date();
+	if (!$('#songtickerli .history-archive').children('.history-day').first()
+	   ||$('#songtickerli .history-archive').children('.history-day').first().data('date') != today) {
+		SONGTICKERLI.create_history_day();
+	}
+	// add last element to history elm
+	elm = $('#songtickerli .scroller-history').children('.history-data').last().clone();
+	$('#songtickerli .history-archive .history-day').first().append(elm);
+	// @todo update hourly stats in history elm
+	// remove original elm
+	$('#songtickerli .scroller-history').children('.history-data').last().remove();
+	
+};
+/**
+ * create a new history archive for the dayy
+ */
+SONGTICKERLI.create_history_day = function() {
+	daystring = SONGTICKERLI.get_date();
+	// create new history day entry from scratch
+	if (!$('#songtickerli .history-archive').children('history-day')) {
+	  $('#songtickerli .history-archive .archive-navigation').insertAfter('<div class="history-day"><div class="scroller-div"><span class="songtickerli-date">'+daystring+'</span></div></div>');
+	} else {
+	  $('#songtickerli .history-archive').prepend('<div class="history-day"><div class="scroller-div"><span class="songtickerli-date">'+daystring+'</span></div></div>');
+	}
+	day = $('#songtickerli .history-archive .history-day').first()
+	day.addClass('history-'+SONGTICKERLI.get_date('class'));
+	day.data('date', daystring);
+	// clone history link
+	link = $('#songtickerli .history-navigation').children().first().clone();
+	link.data('data-class', 'history-'+SONGTICKERLI.get_date('class'));
+	link.click(function() {
+		$('#songtickerli .scroller-history').children('history-data').slideUp();
+		if ($('#songtickerli .history-archive').is(':hidden')) {
+			$('#songtickerli .history-archive').slideDown();
+			$('#songtickerli .'+$(this).data('data-class')).slideDown();
+			$('#songtickerli .scroller-history').children('.history-data').delay(500).slideUp();
+		} else {
+			if ($('#songtickerli .'+$(this).data('data-class')).is(':hidden')) {
+				$('#songtickerli .history-day').slideUp();
+				$('#songtickerli .'+$(this).data('data-class')).slideDown();
+			}
+		}
+	});
+	link.show();
+	$('#songtickerli .history-navigation').append(link);
 };
 SONGTICKERLI.update_infodisplay = function(track) {
 	data = SONGTICKERLI.artist_info[track.artist.toLowerCase()];
@@ -392,6 +479,9 @@ jQuery(document).ready(function() {
 		SONGTICKERLI.show($('#songtickerli .scroller-info'));
 	});
 	$('#songtickerli .history').click(function() {
+		$('#songtickerli .history-day').hide();
+		$('#songtickerli .history-archive').hide();
+		$('#songtickerli .history-data').show();
 		SONGTICKERLI.show($('#songtickerli .scroller-history'));
 	});
 	$('#songtickerli .conf').click(function() {
@@ -403,11 +493,17 @@ jQuery(document).ready(function() {
 	$('#songtickerli input[name=username]').blur(function() {
 		SONGTICKERLI.save_username(this.value);
 	});
+	$('#songtickerli .station-link').click(function() {
+		window.open('http://www.rabe.ch');
+	});
 	$('#songtickerli p.facebook-btn').click(function() {
 		SONGTICKERLI_FB.init();
 	});
-	$('#songtickerli .station-link').click(function() {
-		window.open('http://www.rabe.ch');
+	$('#songtickerli .facebook-rabe-friend').click(function() {
+		SONGTICKERLI_FB.add_friend(null);
+	});
+	$('#songtickerli .facebook-friendbutton-'+SONGTICKERLI_FB.songtickerli_uid).click(function() {
+		SONGTICKERLI_FB.add_friend(SONGTICKERLI_FB.songtickerli_uid);
 	});
 	
 	SONGTICKERLI.register_observer(SONGTICKERLI_FB);
@@ -415,4 +511,3 @@ jQuery(document).ready(function() {
 	jQuery.jStore.load();
 	SONGTICKERLI.main();
 });
-

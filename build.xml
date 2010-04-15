@@ -20,7 +20,7 @@
 				<include name="jquery.json.js"/>
 				<include name="jquery.jstore-all.js"/>
 				<include name="fb_xd_receiver.html"/>
-				<include name="facebook/"/>
+				<include name="facebook/*"/>
 				<include name="opensocial/"/>
 			</fileset>
 		</copy>
@@ -54,11 +54,13 @@
 					<param name="postfix"       value=".png.txt" />
 					<param name="translatehtml" value="false"/>
 				</filterreader>
+				<!--
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Numeric"/>
 					<param name="fastDecode" value="true"/>
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
+				-->
 			</filterchain>
 		</copy>
 		<copy todir="work/" overwrite="true">
@@ -66,6 +68,15 @@
 				<include name="artistdb.js"/>
 			</fileset>
 		</copy>
+		<copy todir="work/" overwrite="true">
+			<fileset dir=".">
+				<include name="README"/>
+			</fileset>
+		</copy>
+		<exec command="sed --in-place -f scripts/strip_html.sed work/index.html"/>
+		<exec command="echo '&lt;!--' &gt; work/README.html.txt"/>
+		<exec command="cat work/README &gt;&gt; work/README.html.txt"/>
+		<exec command="echo '--&gt;' &gt;&gt; work/README.html.txt"/>
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.html"/>
@@ -95,9 +106,16 @@
 					<param name="postfix"       value=".png.txt" />
 					<param name="translatehtml" value="false"/>
 				</filterreader>
+				<filterreader classname="phing.filters.ReplaceTokensWithFile">
+					<param name="dir"           value="work/"/>
+					<param name="begintoken"    value="text_token[[["/>
+					<param name="endtoken"      value="]]]"/>
+					<param name="prefix"        value=""/>
+					<param name="postfix"       value=".txt" />
+					<param name="translatehtml" value="false"/>
+				</filterreader>
 			</filterchain>
 		</copy>
-		<exec command="sed --in-place -f scripts/strip_html.sed work/index.html"/>
 	</target>
 
 	<!--
@@ -123,6 +141,15 @@
 			<fileset dir="../jquery/dist/">
 				<include name="*.js"/>
 			</fileset>
+			<!--
+			<filterchain>
+				<filterreader classname="phing.filters.JSPackerFilter">
+					<param name="encoding" value="Normal"/>
+					<param name="fastDecode" value="true"/>
+					<param name="specialCharacters" value="false"/>
+				</filterreader>
+			</filterchain>
+			-->
 		</copy>
 	</target>
 	<target name="jquery-json">
@@ -130,18 +157,37 @@
 			<fileset dir="../jquery-json/">
 				<include name="*.js"/>
 			</fileset>
+			<!--
+			<filterchain>
+				<filterreader classname="phing.filters.JSPackerFilter">
+					<param name="encoding" value="Normal"/>
+					<param name="fastDecode" value="true"/>
+					<param name="specialCharacters" value="false"/>
+				</filterreader>
+			</filterchain>
+			-->
 		</copy>
 	</target>
 	<target name="jquery-jstore">
 		<copy todir="work" overwrite="true">
-			<fileset dir="../jquery-jstore/dist/development/">
+			<fileset dir="../jquery-jstore/dist/production/">
 				<include name="*.js"/>
 			</fileset>
+			<!--
+			<filterchain>
+				<filterreader classname="phing.filters.JSPackerFilter">
+					<param name="encoding" value="Normal"/>
+					<param name="fastDecode" value="true"/>
+					<param name="specialCharacters" value="false"/>
+				</filterreader>
+			</filterchain>
+			-->
 		</copy>
 	</target>
 
 	<target name="fbconnect">
 	</target>
+
 	<target name="fbapp">
 		<copy todir="work/facebook" overwrite="true">
 			<fileset dir="htdocs/facebook">
@@ -167,12 +213,13 @@
 		<move file="work/artistdb-raw.js" tofile="work/artistdb.js">
 			<filterchain>
 				<filterreader classname="phing.filters.JSPackerFilter">
-					<param name="encoding" value="Numeric"/>
+					<param name="encoding" value="Normal"/>
 					<param name="fastDecode" value="true"/>
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
 			</filterchain>
 		</move>
+		<exec command="tail -n +2 work/artistdb.csv | wc -l > work/artistdb.count.txt "/>
 	</target>
 
 	<target name="images">
@@ -219,6 +266,10 @@
 		<phingcall target="convert_image">
 			<property name="source" value="discogs_64_0.png"/>
 			<property name="file" value="discogs_logo_64"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="source" value="youtube_64_0.png"/>
+			<property name="file" value="youtube_logo_64"/>
 		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file" value="facebook_connect"/>

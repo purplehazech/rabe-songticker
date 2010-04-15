@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
-
+text_token[[[README.html]]]
 <style>
-body {
-background: white;
-text-align: center;
-}
+body { background: white; text-align: center; padding-top: 2em;}
 css_token{style_rabe}
 </style>
-<script src="jquery.js"></script>
-<script src="jquery.json.js"></script>
-<script src="jquery.jstore-all.js"></script>
 
-<script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script>
+<script>
+script_token[[[jquery.min]]]
+</script>
+<script>
+script_token[[[jquery.json.min]]]
+</script>
+<script>
+script_token[[[jquery.jstore-all-min]]]
+</script>
 
 <div align="center">
+
 <div id="songtickerli" class="frame">
  <div class="overlay">
   <div class="artist">songticker.li</div>
@@ -42,8 +45,17 @@ css_token{style_rabe}
    <li><a class="w2info twitter-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[twitter_logo_64]]]"/></a></li>
    <li><a class="w2info facebook-link"  href="#" target="_new"><img src="data:image/png;base64,png_token[[[facebook_logo_64]]]"/></a></li>
    <li><a class="w2info discogs-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[discogs_logo_64]]]"/></a></li>
+   <li><a class="w2info youtube-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[youtube_logo_64]]]"/></a></li>
   </ul>
   <div class="scroller-history scrollersub">
+   <div class="scroller-div history-navigation">
+    <span style="display:none;"><img src="" width="16" height="16" alt="o"/></span>
+   </div>
+   <div class="history-archive" style="display:none;">
+    <div class="archive-navigation" style="display: none">
+     <span><img src="" width="16" height="16" alt="o"/></span>
+    </div>
+   </div>
   </div>
   <div class="scroller-conf scrollersub">
    <div class="scroller-div">
@@ -65,11 +77,11 @@ css_token{style_rabe}
    </div>
    <div class="scroller-div">
     <a class="facebook-btn" href="#"><img src="data:image/png;base64,png_token[[[facebook_connect]]]" border="0"/></a>
-    <!--
     <div class="facebook-gui">
-     <a href="#" class="facebook-rabe-friend">RaBe Friend-Request senden</a><br/>
-     <a href="#" class="facebook-songtickerli-fan">Songtickerli Fan werden</a>
+     <a href="#" class="facebook-groupbutton-738409024">RaBe Friend-Request senden</a><br/>
+     <a href="#" class="facebook-friendbutton-287570953869">Songtickerli Fan werden</a>
     </div>
+    <!--
     <p>
      Twitter
     </p>
@@ -85,29 +97,32 @@ css_token{style_rabe}
     -->
    </div>
    <div class="scroller-div">
-    songtickerli braucht dich! <a target="_new" href="http://spreadsheets.google.com/viewform?formkey=dERhbjJFY0xqV19VSlRZWXRyOFJxN2c6MA">erfasse artist infos</a>
+    songtickerli braucht dich! <a target="_new" href="http://spreadsheets.google.com/viewform?formkey=dERhbjJFY0xqV19VSlRZWXRyOFJxN2c6MA">erfasse artist infos</a><br/> <small>(Anzahl Eintr&auml;ge: text_token[[[artistdb.count]]])</small>
     <!--
     <hr/>
     <a href="#" class="songtickerli-infodisplay">weitere Infos</a>
     -->
    </div>
+   <div class="scroller-div">
+    Debug: 
+    <button onclick="alert(jQuery.jStore.get('username'));">get username</button>
+    <button onclick="alert('set to '+jQuery.jStore.set('username', '[none]'));">unset username</button>
+    <button onclick="jQuery.jStore.set('configured', 'no'); jQuery.jStore.set('color', 'nil');">unset configured</button>
+    <button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'be bop a song ticka', starttime: ''});">update blah</button>
+    <button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'songtickah blues', starttime: '100'});">update blah</button>
+    <button onclick="SONGTICKERLI.update({artist: 'Houderes Goa Experience', title: 'bum bum tschaegg', starttime: '200'});">update blah</button>
+</div>
   </div>
  </div>
 </div>
 
 </div>
 
-<script>script_token[[[rabe]]]</script>
-<script>script_token[[[artistdb]]]</script>
-<!--
-<div style="display:absolute; margin-left: 500px;">
-Debug: 
-<button onclick="alert(jQuery.jStore.get('username'));">get username</button>
-<button onclick="alert('set to '+jQuery.jStore.set('username', '[none]'));">unset username</button>
-<button onclick="jQuery.jStore.set('configured', 'no'); jQuery.jStore.set('color', 'nil');">unset configured</button>
-<button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'be bop a song ticka', starttime: ''});">update blah</button>
-<button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'songtickah blues', starttime: '100'});">update blah</button>
-</div>
--->
-
+<script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script>
+<script>
+script_token[[[rabe]]]
+</script>
+<script>
+script_token[[[artistdb]]]
+</script>
 </html>

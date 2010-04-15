@@ -21,9 +21,12 @@
 		printf "discogs: 'http://discogs.com/artist/"$9"', "
 	}
 	if ($10 != "") {
-		printf "lastfm: 'http://last.fm/artist/"$10"' "
+		printf "lastfm: 'http://last.fm/artist/"$10"', "
 	}
-	printf "}\n"
+	if ($12 != "") {
+		printf "youtube: 'http://www.youtube.com/user/"$12"' "
+	}
+	printf "};\n"
 }
 
 
