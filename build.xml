@@ -6,27 +6,29 @@
 	<taskdef name="sync" classname="phing.tasks.ext.FileSyncTask" />
 
 	<target name="test">
-		<!-- not implemented ;) -->
+		<!-- not implemented :( too late now -->
 	</target>
 
 	<target name="stage" depends="build">
 		<copy todir="_site" overwrite="true">
 			<fileset dir="work/">
 				<include name="index.html"/>
+				<include name="copyright.html"/>
+				<include name="add_artist.html"/>
 				<include name="*.ico"/>
 				<include name="*.xml"/>
 				<include name="songtickerli.js"/>
-				<include name="jquery.js"/>
-				<include name="jquery.json.js"/>
-				<include name="jquery.jstore-all.js"/>
 				<include name="fb_xd_receiver.html"/>
 				<include name="facebook/*"/>
 				<include name="opensocial/"/>
+				<!-- jstore support for oldish platforms -->
+				<include name="jStore.Flash.html"/>
+				<include name="jStore.swf"/>
 			</fileset>
 		</copy>
 	</target>
 
-	<target name="build" depends="jquery,jquery-json,jquery-jstore,fbconnect,fbapp,artistdb,images">
+	<target name="build" depends="jquery,jquery-json,jquery-jstore,jquery-simplemodal,fbconnect,fbapp,artistdb,images">
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.css"/>
@@ -77,6 +79,7 @@
 		<exec command="echo '&lt;!--' &gt; work/README.html.txt"/>
 		<exec command="cat work/README &gt;&gt; work/README.html.txt"/>
 		<exec command="echo '--&gt;' &gt;&gt; work/README.html.txt"/>
+		<exec command="cat work/README &gt; work/README.txt"/>
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.html"/>
@@ -169,11 +172,10 @@
 		</copy>
 	</target>
 	<target name="jquery-jstore">
-		<copy todir="work" overwrite="true">
-			<fileset dir="../jquery-jstore/dist/production/">
-				<include name="*.js"/>
-			</fileset>
-			<!--
+		<exec command="wget http://jquery-jstore.googlecode.com/files/jStore-1.2.0-production.tar.gz -O work/jStore-1.2.0-production.tar.gz"/>
+		<exec command="tar zxvf work/jStore-1.2.0-production.tar.gz -C work"/>
+		<!--
+		<copy tofile="work/jquery.jstore.js" file="../jquery-jstore/src/class.js" overwrite="true"/>
 			<filterchain>
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Normal"/>
@@ -181,7 +183,18 @@
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
 			</filterchain>
-			-->
+		<append destFile="work/jquery.jstore.js">
+			<fileset dir="../jquery-jstore/src/">
+				<include name="jquery.jstore.js"/>
+			</fileset>
+		</append>
+		-->
+	</target>
+	<target name="jquery-simplemodal">
+		<copy todir="work" overwrite="true">
+			<fileset dir="../jquery-simplemodal/simplemodal/dist/">
+				<include name="*.js"/>
+			</fileset>
 		</copy>
 	</target>
 
@@ -207,10 +220,11 @@
 	</target>
 
 	<target name="artistdb">
-		<exec command="wget '${artistdb.spreadsheet}' -O work/artistdb.csv"/>
-		<exec command="sed -e 's|^././.... ..:..:..|&quot;|g' -e 's/$/,&quot;/' work/artistdb.csv | awk -F '&quot;,&quot;' -f scripts/artistdb.csv | tail -n+2 > work/artistdb-raw.js"/>
+		<exec command="wget '${artistdb.couchview}' -O work/artistdb-raw.js"/>
 
-		<move file="work/artistdb-raw.js" tofile="work/artistdb.js">
+		<exec command="php scripts/couch2plain.php > work/artistdb-plain.js"/>
+
+		<move file="work/artistdb-plain.js" tofile="work/artistdb.js">
 			<filterchain>
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Normal"/>
@@ -225,6 +239,10 @@
 	<target name="images">
 		<property name="source" value=""/>
 		<property name="resize" value=""/>
+		<phingcall target="convert_image">
+			<property name="file"   value="logo_rabe_mono"/>
+			<property name="resize" value="111x150"/>
+		</phingcall>
 		<phingcall target="convert_image">
 			<property name="file"   value="logo_rabe_blau"/>
 			<property name="resize" value="111x150"/>
@@ -274,7 +292,22 @@
 		<phingcall target="convert_image">
 			<property name="file" value="facebook_connect"/>
 		</phingcall>
-	</target>
+		<phingcall target="convert_image">
+			<property name="file" value="herz"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="info"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="gear"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="hist"/>
+		</phingcall>
+		<phingcall target="convert_image">
+			<property name="file" value="initial_info_overlay_songtickerli"/>
+		</phingcall>
+</target>
 
 	<target name="convert_image">
 		<if>
@@ -302,6 +335,7 @@
 		      destinationdir="${publish.destination}htdocs/"
 		      excludefile="build.publish.exclude"
 		      listonly="false"
-		      verbose="true"/>
+		      verbose="true"
+		      delete="true"/>
 	</target>
 </project>

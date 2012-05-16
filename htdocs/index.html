@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html manifest="index.manifest">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 text_token[[[README.html]]]
 <style>
-body { background: white; text-align: center; padding-top: 2em;}
+body { background: white; text-align: center; padding-top: 2em; }
 css_token{style_rabe}
 </style>
 
@@ -15,18 +16,22 @@ script_token[[[jquery.json.min]]]
 <script>
 script_token[[[jquery.jstore-all-min]]]
 </script>
+<script>
+script_token[[[jquery.simplemodal-1.3.5.pack]]]
+</script>
 
 <div align="center">
 
 <div id="songtickerli" class="frame">
  <div class="overlay">
-  <div class="artist">songticker.li</div>
+  <div class="artist">songtickerli</div>
   <div class="title">lade ticker daten</div>
   <div class="starttime" style="display:none"></div>
-  <span class="love button">&lt;3</span>
-  <span class="info button">i</span>
-  <span class="history button">h</span>
-  <span class="conf button">o</span>
+  <span class="love button"><img src="data:image/png;base64,png_token[[[herz]]]"/></span>
+  <span class="info button"><img src="data:image/png;base64,png_token[[[info]]]"/></span>
+  <span class="history button"><img src="data:image/png;base64,png_token[[[hist]]]"/></span>
+  <span class="conf button"><img src="data:image/png;base64,png_token[[[gear]]]"/></span>
+  <div class="bleep"></div>
  </div>
  <div class="station-link" style="border: none"></div>
  <div class="scroller">
@@ -46,41 +51,47 @@ script_token[[[jquery.jstore-all-min]]]
    <li><a class="w2info facebook-link"  href="#" target="_new"><img src="data:image/png;base64,png_token[[[facebook_logo_64]]]"/></a></li>
    <li><a class="w2info discogs-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[discogs_logo_64]]]"/></a></li>
    <li><a class="w2info youtube-link"   href="#" target="_new"><img src="data:image/png;base64,png_token[[[youtube_logo_64]]]"/></a></li>
+   <li><a href="#" class="songtickerli-enter-artistinfo">artist infos editieren</a></li>
   </ul>
   <div class="scroller-history scrollersub">
-   <div class="scroller-div history-navigation">
-    <span style="display:none;"><img src="" width="16" height="16" alt="o"/></span>
+   <div class="history-navigation">
+    <span style="display:none;"><img src="data:image/png;base64,png_token[[[twitter_logo_64]]]" width="16" height="16" alt="o"/></span>
    </div>
    <div class="history-archive" style="display:none;">
     <div class="archive-navigation" style="display: none">
-     <span><img src="" width="16" height="16" alt="o"/></span>
+     <span><img src="data:image/png;base64,png_token[[[twitter_logo_64]]]" width="16" height="16" alt="o"/></span>
     </div>
    </div>
   </div>
   <div class="scroller-conf scrollersub">
-   <div class="scroller-div">
+   <div class="scroller-div" style="text-align:center;">
     <p class="unconfigured">
-     Songtickerli wurde bis jetzt noch nicht konfiguriert. Wenn dir rasch Zeit nimmst
-     daf&uuml;r kannst du danach mit dem Herz oben links deine Liebe deinen Freunden kund
-     tun.
+     Danke fürs Ausprobieren. Bitte wähle eine Farbe.
     </p>
     <p>
-     Username: <input name="username" value="&lt;none&gt;"/>
-    </p>
-    <p>
-    Farbe: 
-   	<input type="radio" name="color" value="blau"/>Blau
-	<input type="radio" name="color" value="gruen"/>Gr&uuml;n
-	<input type="radio" name="color" value="orange"/>Orange
-	<input type="radio" name="color" value="rot"/>Rot
+     <div class="colorpicker">
+      <div style="background-color: blue" class="colorpickerbox">
+    	<input type="radio" name="color" value="blau"/>
+      </div>
+      <div style="background-color: lightgreen" class="colorpickerbox">
+ 	<input type="radio" name="color" value="gruen"/>
+      </div>
+      <div style="background-color: orange" class="colorpickerbox">
+ 	<input type="radio" name="color" value="orange"/>
+      </div>
+      <div style="background-color: red" class="colorpickerbox">
+	<input type="radio" name="color" value="rot"/>
+      </div>
+     </div>
     </p>
    </div>
-   <div class="scroller-div">
-    <a class="facebook-btn" href="#"><img src="data:image/png;base64,png_token[[[facebook_connect]]]" border="0"/></a>
-    <div class="facebook-gui">
-     <a href="#" class="facebook-groupbutton-738409024">RaBe Friend-Request senden</a><br/>
-     <a href="#" class="facebook-friendbutton-287570953869">Songtickerli Fan werden</a>
-    </div>
+   <div class="scroller-div" style="display:none;">
+    <p class="fb-unconfigured">Damit der love button funktioniert musst du songtickerli mit facebook verbinden.</p>
+    <a class="facebook-btn" href="#" style="text-align: center"><img src="data:image/png;base64,png_token[[[facebook_connect]]]" border="0"/></a><br/>
+
+    <p>Bitte like uns auf Facebook wenn dir songtickerli gefällt.</p>
+    songtickerli <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fapps.facebook.com%2Fsongtickerli%2F&amp;layout=standard&amp;show_faces=true&amp;width=356&amp;action=like&amp;font&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:356px; height:80px;" allowTransparency="true"></iframe>
+    Radio RaBe <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FRadio-RaBe%2F209487725728008&amp;layout=standard&amp;show_faces=true&amp;width=356&amp;action=like&amp;font&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:356px; height:80px;" allowTransparency="true"></iframe>
     <!--
     <p>
      Twitter
@@ -96,14 +107,11 @@ script_token[[[jquery.jstore-all-min]]]
     </p>
     -->
    </div>
-   <div class="scroller-div">
-    songtickerli braucht dich! <a target="_new" href="http://spreadsheets.google.com/viewform?formkey=dERhbjJFY0xqV19VSlRZWXRyOFJxN2c6MA">erfasse artist infos</a><br/> <small>(Anzahl Eintr&auml;ge: text_token[[[artistdb.count]]])</small>
-    <!--
-    <hr/>
-    <a href="#" class="songtickerli-infodisplay">weitere Infos</a>
-    -->
+   <div class="scroller-div" style="text-align: center; border:0; background-color: rgba(0,0,0,0);">
+    <a href="#" class="songtickerli-infodisplay">songticker.li | 2010 - 2011 | hairmare.ch</a>
    </div>
-   <div class="scroller-div">
+   <hr class="debug" style="display:none;"/>
+   <div class="debug" style="display:none;">
     Debug: 
     <button onclick="alert(jQuery.jStore.get('username'));">get username</button>
     <button onclick="alert('set to '+jQuery.jStore.set('username', '[none]'));">unset username</button>
@@ -111,12 +119,15 @@ script_token[[[jquery.jstore-all-min]]]
     <button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'be bop a song ticka', starttime: ''});">update blah</button>
     <button onclick="SONGTICKERLI.update({artist: 'Lucas Bickel', title: 'songtickah blues', starttime: '100'});">update blah</button>
     <button onclick="SONGTICKERLI.update({artist: 'Houderes Goa Experience', title: 'bum bum tschaegg', starttime: '200'});">update blah</button>
+    <button onclick="SONGTICKERLI.update({artist: 'Flight Of The Conchords', title: 'tralalalala', starttime: '300'});">update blah</button>
 </div>
   </div>
  </div>
 </div>
 
 </div>
+
+<div class="notification-area"></div>
 
 <script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script>
 <script>
@@ -125,4 +136,5 @@ script_token[[[rabe]]]
 <script>
 script_token[[[artistdb]]]
 </script>
+<div id="initial-help" style="display:none;"><img src="data:image/png;base64,png_token[[[initial_info_overlay_songtickerli]]]" border="0"/></div>
 </html>

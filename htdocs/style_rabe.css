@@ -3,7 +3,7 @@
 	z-index: 1020;
 	font-family: sans-serif;
 	font-size: 80%;
-	color: blue;
+	color: gray;
 	-moz-border-radius:6px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
@@ -13,9 +13,9 @@
 	width: 300px;
 	height: 70px;
 	background-color: white;
-	background-image: url(data:image/png;base64,png_token[[[logo_rabe_blau]]]) no-repeat 330px;
 	padding-right: 100px;
 	padding-top: 9px;
+	position: relative;
 }
 #songtickerli .station-link {
 	position: relative;
@@ -37,7 +37,8 @@
 	margin-left: 9px;
 	height: 54px;
 	padding-top: 6px;
-	background-color: rgba(200, 200, 255, 0.5);
+	margin-bottom: 9px;
+	background-color: rgba(255, 255, 255, 0.5);
 }
 #songtickerli .artist {
 	text-transform: uppercase;
@@ -50,25 +51,59 @@
 	position: relative;
 	cursor: pointer;
 }
+#songtickerli .button img {
+	opacity:0.4;
+	filter:alpha(opacity=40)
+}
 #songtickerli .love {
-	left: -120px;
-	top: -35px;
+	left: -105px;
+	top: -40px;
 	display: none;
 }
 #songtickerli .info {
-	left: -135px;
-	top: -15px;
+	left: -125px;
+	top: -20px;
 	display: none;
 }
 #songtickerli .history {
-	left: -143px;
-	top: 5px;
+	left: -145px;
+	top: 0;
 	display:none;
 }
 #songtickerli .conf {
-	left: -140px;
-	top: 5px;
+	left: -145px;
+	top: 0;
 	display: none;
+}
+#songtickerli .bleep {
+	display: none;
+	position: absolute;
+	right: 105px;
+	background-color: black;
+	width: 6px;
+	height: 6px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	opacity: 0.2;
+	filter:alpha(opacity=20);
+	top: 15px;
+}
+#simplemodal-container {
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	border: 1px solid #ddd;
+	border-right: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+	background: white;
+	padding: 6px;
+	text-align: left;
+	position: absolute;
+	width: 80%;
+	height: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
 }
 #songtickerli .scroller {
 	-moz-border-radius:0 0 6px 6px;
@@ -89,7 +124,7 @@
 	border-bottom: 1px solid #aaa;
 	margin-left: 6px;
 	margin-right: 4px;
-	margin-top: 9px;
+	margin-top: 0;
 	margin-bottom: 12px;
 	padding-bottom: 3px;
 	text-align: left;
@@ -125,6 +160,13 @@
 	border-bottom: 1px solid #aaa;
 	background: white;
 }
+#songtickerli .scroller .scroller-div a {
+	color: gray;
+	text-decoration: none;
+}
+#songtickerli .history-navigation {
+	display: none;
+}
 #songtickerli .history-data {
 	margin: 6px 6px 6px 6px;
 	padding: 3px;
@@ -146,4 +188,53 @@
 #songtickerli .facebook-btn {
 	display: block;
 	float: none;
+}
+
+#songtickerli .colorpicker {
+	padding-left: 25%;
+	padding-right: 25%;
+}
+#songtickerli .colorpickerbox {
+	display: inline;
+	padding: 10px;
+	width: 36px;
+	height: 36px;
+	color: black;
+}
+#songtickerli .colorpickerbox:hover {
+	cursor: pointer;
+}
+
+#songtickerli .colorpickerbox input {
+	visibility: hidden;
+}
+
+.notification-area {
+	position: absolute;
+	bottom: 1.5em;
+	width: 100%;
+	margin: -8px -8px 0 -8px;
+	z-index: 1030;
+}
+.notification-area p {
+	font-family: sans-serif;
+	font-size: 80%;
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+	border: 1px solid #ddd;
+	border-right: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+	background: white;
+	padding: 0.1em;
+	margin: 0.5em;
+}
+
+#initial-help {
+	position: relative;
+	top: -105px;
+	z-index: 3000;
+	left: 190px;
+	padding: 0;
+	margin-left: -320px;
 }
