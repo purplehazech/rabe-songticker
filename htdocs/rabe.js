@@ -12,6 +12,7 @@ SONGTICKERLI.enableTickerInfo = false;
 SONGTICKERLI.enableLoveFeature = false;
 SONGTICKERLI.enableArtistInfo = false;
 SONGTICKERLI.enableLogosupport = false;
+SONGTICKERLI.enableJstore = false;
 SONGTICKERLI.localHistory = false;
 SONGTICKERLI.showLoveDialog = false;
 SONGTICKERLI.scrollerLock = false;
@@ -586,6 +587,8 @@ jQuery(document).ready(function() {
     if (typeof SONGTICKERLI_TWITTER != 'undefined') {
 	    SONGTICKERLI.register_observer(SONGTICKERLI_TWITTER);
     }
-	jQuery.jStore.load();
+    if (SONGTICKERLI.enableJstore) {
+	    jQuery.jStore.load();
+    }
 	SONGTICKERLI.main();
 });
