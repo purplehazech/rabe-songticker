@@ -85,10 +85,10 @@ SONGTICKERLI.main = function() {
 		$.ajax({
 			url: '/data/rabe.ch/0.9.1/',
 			success: function(data) {
-				SONGTICKERLI.artist    = $(data).children('track').children('artist').text();
-				SONGTICKERLI.title     = $(data).children('track').children('title').text();
-				SONGTICKERLI.message   = $(data).children('track').children('message').text();
-				SONGTICKERLI.starttime = $(data).children('track').children('starttime').text();
+				SONGTICKERLI.artist    = $(data).children('ticker').children('track').children('artist').text();
+				SONGTICKERLI.title     = $(data).children('ticker').children('track').children('title').text();
+				SONGTICKERLI.starttime = $(data).children('ticker').children('track').attribute('startTime').text();
+				SONGTICKERLI.message   = $(data).children('ticker').children('show').text();
 				SONGTICKERLI.delay = SONGTICKERLI.lowdelay;
 				SONGTICKERLI.bleep();
 				SONGTICKERLI.main();
