@@ -7,7 +7,7 @@
 var SONGTICKERLI = function() {
 	var storageReady = false;
 };
-SONGTICKERLI.tickerurl = 'ticker.php';
+SONGTICKERLI.tickerUrl = 'ticker.php';
 SONGTICKERLI.enableConfig = false;
 SONGTICKERLI.enableTickerInfo = false;
 SONGTICKERLI.enableLoveFeature = false;
