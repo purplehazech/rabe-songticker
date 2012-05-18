@@ -58,12 +58,12 @@
 					<param name="postfix"       value=".png.txt" />
 					<param name="translatehtml" value="false"/>
 				</filterreader>
+				<!--
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Numeric"/>
 					<param name="fastDecode" value="false"/>
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
-				<!--
 				-->
 			</filterchain>
 		</copy>
