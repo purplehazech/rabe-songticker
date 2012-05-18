@@ -1,126 +1,3 @@
-
-/**
- * prototype for all things facebook
- */
-var SONGTICKERLI_FB = function() {};
-SONGTICKERLI_FB.apikey = '0b69cbfe795f13e8f415fee381e2d695';
-SONGTICKERLI_FB.api = null;
-/**
- * songtickerlis uid for becominig friend
- */
-SONGTICKERLI_FB.songtickerli_uid = 287570953869;
-
-SONGTICKERLI_FB.rabe_gid = 738409024;
-/**
- * startup things
- */
-SONGTICKERLI_FB.init = function() {
-	SONGTICKERLI.debug && console.log('initializing fb');
-	FB.init(SONGTICKERLI_FB.apikey, 'fb_xd_receiver.html');
-	FB.ensureInit(function() {
-		SONGTICKERLI_FB.initialized = true;
-		$('#songtickerli .fb-unconfigured').hide();
-		if (typeof SONGTICKERLI_FB.registered == 'undefined' || SONGTICKERLI_FB.registered != true) {
-			SONGTICKERLI_FB.register();
-		} else {
-			FB.Connect.requireSession();
-		}
-		SONGTICKERLI_FB.api = FB.ApiClient(SONGTICKERLI_FB.apikey);
-		me = FB.Connect.get_loggedInUser();
-	});
-};
-/**
- * gets called when storage is ready
- */
-SONGTICKERLI_FB.jStoreReady = function() {
-	fb_perms = jQuery.jStore.get('facebook_perms');
-	fb_url = jQuery.jStore.get('facebook_url');
-	if (typeof fb_perms != 'undefined' && fb_perms != false && fb_perms != null) {
-		SONGTICKERLI.debug && console.log('initializing fb db');
-		$('#songtickerli .facebook-btn').hide();
-		SONGTICKERLI_FB.registered = true;
-		SONGTICKERLI_FB.init();
-	} else {
-		//$('#songtickerli .facebook-btn').hide();
-		$('#songtickerli .facebook-btn').children('img').click(function() {
-			SONGTICKERLI_FB.init();
-		});
-	}
-};
-/**
- * send a love message to facebook
- */
-SONGTICKERLI_FB.love = function(track) {
-	if (!SONGTICKERLI_FB.registered) {
-		return 0;
-	}
-	if (track.artist && track.title) {
-		FB.Connect.streamPublish('Auf http://rabe.ch läuft gerade ' + track.title + ' von ' + track.artist +'. Ein geiler Track!');
-	} else {
-		FB.Connect.streamPublish('Höre gerade Radio RaBe http://rabe.ch');
-	}
-	return 1;
-};
-/**
- * love button callback
- *
- * for when user wanted to add text to love message
- */
-SONGTICKERLI_FB.post_callback = function() {
-};
-/**
- * facebook login call
- */
-SONGTICKERLI_FB.register = function() {
-	FB.Connect.requireSession(SONGTICKERLI_FB.register_callback_ok, SONGTICKERLI_FB.register_callback_cancel);
-};
-/**
- * get perms
- */
-SONGTICKERLI_FB.register_callback_ok = function() {
-	FB.Connect.showPermissionDialog('offline_access,publish_stream', SONGTICKERLI_FB.register_callback_perms);
-};
-/**
- * user abort
- */
-SONGTICKERLI_FB.register_callback_cancel = function() {
-	$('#songtickerli .facebook-btn').show();
-};
-/**
- * perms available
- *
- * user will have to set them in facebook ui after this
- */
-SONGTICKERLI_FB.register_callback_perms = function(perms) {
-	if (perms) {
-		jQuery.jStore.set('facebook_perms', perms);
-		jQuery.jStore.set('facebook_username', FB.Connect.get_loggedInUser());
-		jQuery.jStore.set('facebook_url', 'http://www.facebook.com/'+FB.Connect.get_loggedInUser());
-		$('#songtickerli .facebook-btn').hide();
-		SONGTICKERLI_FB.registered = true;
-	} else {
-		$('#songtickerli .facebook-btn').show();
-	}
-};
-SONGTICKERLI_FB.add_friend = function(friend) {
-	FB.Connect.showAddFriendDialog(friend, function() {
-		if (this.value) {
-			// hide button
-		}
-	});
-};
-
-var SONGTICKERLI_TWITTER = function() {
-};
-SONGTICKERLI_TWITTER.init = function() {
-	$.get('http://api.twitter.com/oauth/request_token', SONGTICKERLI_TWITTER.init_rtoken);
-};
-SONGTICKERLI_TWITTER.init_rtoken = function(data) {
-	
-};
-SONGTICKERLI_TWITTER.post = function(track) {
-};
-
 /**
  * basic container function for songtickerli
  *
@@ -130,6 +7,12 @@ SONGTICKERLI_TWITTER.post = function(track) {
 var SONGTICKERLI = function() {
 	var storageReady = false;
 };
+SONGTICKERLI.enableConfig = false;
+SONGTICKERLI.enableTickerInfo = false;
+SONGTICKERLI.enableLoveFeature = false;
+SONGTICKERLI.enableArtistInfo = false;
+SONGTICKERLI.enableLogosupport = false;
+SONGTICKERLI.localHistory = false;
 SONGTICKERLI.showLoveDialog = false;
 SONGTICKERLI.scrollerLock = false;
 SONGTICKERLI.observers = [];
@@ -144,6 +27,17 @@ SONGTICKERLI.notifydelay = 3000;
 SONGTICKERLI.artist_info = [];
 SONGTICKERLI.firstcolor = true;
 SONGTICKERLI.debug = false;
+/**
+ * map where the data should get displayed
+ * and in the case of starttime also stored
+ * for later comparison
+ */
+SONGTICKERLI.targets = {
+    "show":"#songtickerli .overlay .show",
+    "title":"#songtickerli .overlay .title",
+    "artist":"#songtickerli .overlay .artist",
+    "starttime": "#songtickerli .overlay .starttime"
+};
 /**
  * an array for defining some basic setting fields to load
  */
@@ -217,24 +111,31 @@ SONGTICKERLI.update = function(track) {
 	if (track.starttime == $('#songtickerli .starttime').html()) {
 		return;
 	}
-	// clone old data to history
-	SONGTICKERLI.update_history();
+    if (SONGTICKERLI.localHistory) {
+	    // clone old data to history
+	    SONGTICKERLI.update_history();
+    }
 
 	// load new data
+    if (track.show) {
+        $(SONGTICKERLI.targets.show).html(track.show);
+    }
 	if (track.artist) {
-		$('#songtickerli .overlay .artist').html(track.artist);
-		$('#songtickerli .overlay .title').html(track.title);
+		$(SONGTICKERLI.targets.artists).html(track.artist);
+		$(SONGTICKERLI.targets.title).html(track.title);
 	} else if (track.message) {
-		$('#songtickerli .overlay .artist').html(track.message);
-		$('#songtickerli .overlay .title').html('Radio RaBe 95.6 MHz');
+		$(SONGTICKERLI.targets.artists).html(track.message);
+		$(SONGTICKERLI.targets.title).html('Radio Bern 95.6 MHz');
 	} else {
-		$('#songtickerli .overlay .artist').html(track.title);
-		$('#songtickerli .overlay .title').html('Radio RaBe 95.6 MHz');
+		$(SONGTICKERLI.targets.artists).html(track.title);
+		$(SONGTICKERLI.targets.title).html('Radio Bern 95.6 MHz');
 	}
-	$('#songtickerli .scroller-info .songtickerli-enter-artistinfo').attr('href', 'javascript:SONGTICKERLI.add_artist(null);');
-	SONGTICKERLI.update_infodisplay(track);
+    if (SONGTICKERLI.enableArtistInfo) {
+	    $('#songtickerli .scroller-info .songtickerli-enter-artistinfo').attr('href', 'javascript:SONGTICKERLI.add_artist(null);');
+	    SONGTICKERLI.update_infodisplay(track);
+    }
 
-	$('#songtickerli .overlay .starttime').html(SONGTICKERLI.starttime);
+	$(SONGTICKERLI.targets.starttime).html(SONGTICKERLI.starttime);
 };
 SONGTICKERLI.update_history = function() {
 	hist = $('#songtickerli .scroller-history');
@@ -606,67 +507,85 @@ jQuery.jStore.ready(function(engine){
 
 jQuery(document).ready(function() {
 
-	$('#songtickerli').hover(function() {
-		SONGTICKERLI.configured() && $('#songtickerli .button').fadeIn();
-	}, function() {
-		$('#songtickerli .button').fadeOut();
-		ihelp = $('#initial-help');
-		SONGTICKERLI.configured() && ihelp.is(':hidden') && $('#songtickerli .scroller').slideUp();
-		ihelp.fadeOut();
-	});
-	$('#songtickerli .love').click(function() {
-		SONGTICKERLI.love_track(SONGTICKERLI.current_track());
-	});
-	$('#songtickerli button[name=post-love]').click(function() {
-		SONGTICKERLI.love_track_okcallback();
-	});
-	$('#songtickerli .info').click(function() {
-		SONGTICKERLI.show($('#songtickerli .scroller-info'));
-	});
-	$('#songtickerli .history').click(function() {
-		if ($('#songtickerli .scroller-history').is(':hidden')) {
-			$('#songtickerli .history-archive').hide();
-			$('#songtickerli .history-data').show();
-		} else {
-			$('#songtickerli .history-archive').slideUp();
-			$('#songtickerli .history-data').slideDown();
-		}
-		SONGTICKERLI.show($('#songtickerli .scroller-history'));
-	});
-	$('#songtickerli .conf').click(function() {
-		SONGTICKERLI.show($('#songtickerli .scroller-conf'));
-	});
-	$('#songtickerli .songtickerli-infodisplay').click(function() {
-		SONGTICKERLI.modal('copyright');
-	});
-	$('#songtickerli input[name=color]').click(function() {
-		SONGTICKERLI.switch_color(this.value);
-	});
-	$('#songtickerli .colorpickerbox').click(function() {
-		SONGTICKERLI.switch_color($(this).children()[0].value);
-		$('#songtickerli .button').fadeIn(); // @todo refactor, needed for first time init 
-	});
-	$('#songtickerli input[name=username]').blur(function() {
-		SONGTICKERLI.save_username(this.value);
-	});
+    if (SONGTICKERLI.enableConfig) {
+    	$('#songtickerli').hover(function() {
+    		SONGTICKERLI.configured() && $('#songtickerli .button').fadeIn();
+    	}, function() {
+    		$('#songtickerli .button').fadeOut();
+    		ihelp = $('#initial-help');
+    		SONGTICKERLI.configured() && ihelp.is(':hidden') && $('#songtickerli .scroller').slideUp();
+    		ihelp.fadeOut();
+    	});
+    	$('#initial-help').click(function() {
+		    $('#initial-help').fadeOut();
+	    });
+	    $('#songtickerli .conf').click(function() {
+	    	SONGTICKERLI.show($('#songtickerli .scroller-conf'));
+	    });
+    	$('#songtickerli input[name=username]').blur(function() {
+	    	SONGTICKERLI.save_username(this.value);
+	    });
+    }
+    if (SONGTICKERLI.enableLoveFeature) {
+	    $('#songtickerli .love').click(function() {
+		    SONGTICKERLI.love_track(SONGTICKERLI.current_track());
+	    });
+	    $('#songtickerli button[name=post-love]').click(function() {
+	    	SONGTICKERLI.love_track_okcallback();
+	    });
+    }
+    if (SONGTICKERLI.enableTickerInfo) {
+	    $('#songtickerli .info').click(function() {
+		    SONGTICKERLI.show($('#songtickerli .scroller-info'));
+	    });
+    	$('#songtickerli .songtickerli-infodisplay').click(function() {
+	    	SONGTICKERLI.modal('copyright');
+	    });
+    }
+    if (SONGTICKERLI.localHistory) {
+	    $('#songtickerli .history').click(function() {
+		    if ($('#songtickerli .scroller-history').is(':hidden')) {
+			    $('#songtickerli .history-archive').hide();
+			    $('#songtickerli .history-data').show();
+		    } else {
+		    	$('#songtickerli .history-archive').slideUp();
+		    	$('#songtickerli .history-data').slideDown();
+		    }
+		    SONGTICKERLI.show($('#songtickerli .scroller-history'));
+	    });
+    }
+    if (SONGTICKERLI.enableLogosupport) {
+	    $('#songtickerli input[name=color]').click(function() {
+		    SONGTICKERLI.switch_color(this.value);
+	    });
+	    $('#songtickerli .colorpickerbox').click(function() {
+		    SONGTICKERLI.switch_color($(this).children()[0].value);
+		    $('#songtickerli .button').fadeIn(); // @todo refactor, needed for first time init 
+	    });
+    }
 	$('#songtickerli .station-link').click(function() {
 		window.open('http://www.rabe.ch');
 	});
-	$('#songtickerli p.facebook-btn').click(function() {
-		SONGTICKERLI_FB.init();
-	});
-	$('#songtickerli .facebook-rabe-friend').click(function() {
-		SONGTICKERLI_FB.add_friend(null);
-	});
-	$('#songtickerli .facebook-friendbutton-'+SONGTICKERLI_FB.songtickerli_uid).click(function() {
-		SONGTICKERLI_FB.add_friend(SONGTICKERLI_FB.songtickerli_uid);
-	});
-	$('#initial-help').click(function() {
-		$('#initial-help').fadeOut();
-	});
-	
-	SONGTICKERLI.register_observer(SONGTICKERLI_FB);
-	SONGTICKERLI.register_observer(SONGTICKERLI_TWITTER);
+
+    // init facebook stuff if loaded
+    if (typeof SONGTICKERLI_FB != 'undefined') {
+	    $('#songtickerli p.facebook-btn').click(function() {
+	    	SONGTICKERLI_FB.init();
+	    });
+	    $('#songtickerli .facebook-rabe-friend').click(function() {
+		    SONGTICKERLI_FB.add_friend(null);
+	    });
+	    $('#songtickerli .facebook-friendbutton-'+SONGTICKERLI_FB.songtickerli_uid).click(function() {
+		    SONGTICKERLI_FB.add_friend(SONGTICKERLI_FB.songtickerli_uid);
+	    });
+    }
+
+    if (typeof SONGTICKERLI_FB != 'undefined') {
+	    SONGTICKERLI.register_observer(SONGTICKERLI_FB);
+    }
+    if (typeof SONGTICKERLI_TWITTER != 'undefined') {
+	    SONGTICKERLI.register_observer(SONGTICKERLI_TWITTER);
+    }
 	jQuery.jStore.load();
 	SONGTICKERLI.main();
 });
