@@ -12,7 +12,6 @@
 	<target name="stage" depends="build">
 		<copy todir="_site" overwrite="true">
 			<fileset dir="work/">
-				<include name="LICENSE"/>
 				<include name="index.html"/>
 				<include name="demo.html"/>
 				<include name="rabe.js"/>
@@ -32,6 +31,9 @@
 				<include name="jStore.Flash.html"/>
 				<include name="jStore.swf"/>
 			</fileset>
+            <fileset dir=".">
+                <include name="LICENSE"/>
+            </fileset>
 		</copy>
 	</target>
 
@@ -337,7 +339,7 @@
 
     <target name="build-lib-tarball" depends="stage">
         <tar destfile="rabe-songticker.tar.gz" compression="gzip" basedir="_site" prefix="songticker">
-            <fileset dir=".">
+            <fileset dir="_site/">
                 <include name="LICENSE"/>
                 <include name="rabe.js"/>
                 <include name="jquery.min.js"/>
