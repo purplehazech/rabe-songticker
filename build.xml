@@ -18,7 +18,7 @@
 				<include name="jquery.min.js"/>
 				<include name="jquery.json.min.js"/>
 				<include name="jquery.jstore-all-min.js"/>
-				<include name="jquery.simplemodal.1.4.2.pack.js"/>
+				<include name="jquery.simplemodal.1.4.2.min.js"/>
 				<include name="copyright.html"/>
 				<include name="add_artist.html"/>
 				<include name="*.ico"/>
