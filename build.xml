@@ -338,7 +338,7 @@
 	</target>
 
     <target name="build-lib-tarball" depends="stage">
-        <tar destfile="rabe-songticker.tar.gz" compression="gzip" basedir="_site" prefix="songticker">
+        <tar destfile="rabe-songticker-${build.version}.tar.gz" compression="gzip" basedir="_site" prefix="rabe-songticker-${build.version}">
             <fileset dir="_site/">
                 <include name="LICENSE"/>
                 <include name="rabe.js"/>
