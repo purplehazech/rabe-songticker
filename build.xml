@@ -339,7 +339,7 @@
 	</target>
 
     <target name="build-lib-tarball" depends="stage">
-        <exec command="sh build.libjs.sh > work/rabe.lib.js && mv work/rabe.lib.js work/rabe.js"/>
+        <exec command="sh build.libjs.sh > work/rabe.lib.js &amp;&amp; mv work/rabe.lib.js work/rabe.js"/>
         <tar destfile="rabe-songticker-${build.version}.tar.gz" compression="gzip" basedir="_site" prefix="rabe-songticker-${build.version}">
             <fileset dir="_site/">
                 <include name="LICENSE"/>
