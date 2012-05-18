@@ -7,7 +7,8 @@
 var SONGTICKERLI = function() {
 	var storageReady = false;
 };
-SONGTICKERLI.tickerUrl = 'ticker.php';
+SONGTICKERLI.tickerUrl = _songtickerli_url || 'ticker.php';
+//##nolibmodestart
 SONGTICKERLI.enableConfig = false;
 SONGTICKERLI.enableTickerInfo = false;
 SONGTICKERLI.enableLoveFeature = false;
@@ -16,8 +17,11 @@ SONGTICKERLI.enableLogosupport = false;
 SONGTICKERLI.enableJstore = false;
 SONGTICKERLI.localHistory = false;
 SONGTICKERLI.showLoveDialog = false;
+SONGTICKERLI.firstcolor = true;
+//##nolibmodestop
 SONGTICKERLI.scrollerLock = false;
 SONGTICKERLI.observers = [];
+SONGTICKERLI.show = 'Radio Bern 95.6 MHz';
 SONGTICKERLI.artist = 'songtickerli';
 SONGTICKERLI.title = 'inializing';
 SONGTICKERLI.message = null;
@@ -40,6 +44,7 @@ SONGTICKERLI.targets = _songtickerli_targets || {
     "artist":"#songtickerli .overlay .artist",
     "starttime": "#songtickerli .overlay .starttime"
 };
+//##nolibmodestart
 /**
  * an array for defining some basic setting fields to load
  */
@@ -75,6 +80,7 @@ SONGTICKERLI.observer_jStoreReady = function() {
 		}
 	}
 };
+//##nolibmodestop
 /**
  * main loop responsible for ticking the ticker by starting ajax requesets.
  */
@@ -88,10 +94,10 @@ SONGTICKERLI.main = function() {
 			success: function(data) {
 				SONGTICKERLI.artist    = $(data).children('ticker').children('track').children('artist').text();
 				SONGTICKERLI.title     = $(data).children('ticker').children('track').children('title').text();
-				SONGTICKERLI.starttime = $(data).children('ticker').children('track').attribute('startTime').text();
-				SONGTICKERLI.message   = $(data).children('ticker').children('show').text();
+				SONGTICKERLI.starttime = $(data).children('ticker').children('track').children('startTime').text();
+				SONGTICKERLI.message   = $(data).children('ticker').children('show').children('name').text();
 				SONGTICKERLI.delay = SONGTICKERLI.lowdelay;
-				SONGTICKERLI.bleep();
+				typeof SONGTICKERLI.bleep != 'undefined' && SONGTICKERLI.bleep();
 				SONGTICKERLI.main();
 				SONGTICKERLI.debug && SONGTICKERLI.notify('Eine Internet Verbindung, nächstes Update in '+SONGTICKERLI.delay/1000/60+' Minuten');
 			},
@@ -113,10 +119,12 @@ SONGTICKERLI.update = function(track) {
 	if (track.starttime == $('#songtickerli .starttime').html()) {
 		return;
 	}
+//##nolibmodestart
     if (SONGTICKERLI.localHistory) {
 	    // clone old data to history
 	    SONGTICKERLI.update_history();
     }
+//##nolibmodestop
 
 	// load new data
     if (track.show) {
@@ -132,13 +140,18 @@ SONGTICKERLI.update = function(track) {
 		$(SONGTICKERLI.targets.artists).html(track.title);
 		$(SONGTICKERLI.targets.title).html('Radio Bern 95.6 MHz');
 	}
+//##nolibmodestart
     if (SONGTICKERLI.enableArtistInfo) {
 	    $('#songtickerli .scroller-info .songtickerli-enter-artistinfo').attr('href', 'javascript:SONGTICKERLI.add_artist(null);');
 	    SONGTICKERLI.update_infodisplay(track);
     }
+//##nolibmodestop
+
+
 
 	$(SONGTICKERLI.targets.starttime).html(SONGTICKERLI.starttime);
 };
+//##nolibmodestart
 SONGTICKERLI.update_history = function() {
 	hist = $('#songtickerli .scroller-history');
 
@@ -299,6 +312,7 @@ SONGTICKERLI.add_artist = function(artist) {
 		SONGTICKERLI.notify('Es können nur Tracks mit Artist erfasst werden, welcher dem Ticker bekannt sind.');
 	}
 };
+//##nolibmodestop
 SONGTICKERLI.current_track = function() {
 	return {
 		artist:    SONGTICKERLI.artist,
@@ -307,6 +321,7 @@ SONGTICKERLI.current_track = function() {
 		starttime: SONGTICKERLI.starttime
 	}
 };
+//##nolibmodestart
 SONGTICKERLI.show = function(choice) {
 	if ($('#songtickerli .scroller').is(':hidden')) {
 		$('#songtickerli .scrollersub').hide();
@@ -513,9 +528,10 @@ if (typeof jQuery.jStore != 'undefined') {
 
     });
 }
+//##nolibmodestop
 
 jQuery(document).ready(function() {
-
+//##nolibmodestart
     if (SONGTICKERLI.enableConfig) {
     	$('#songtickerli').hover(function() {
     		SONGTICKERLI.configured() && $('#songtickerli .button').fadeIn();
@@ -598,5 +614,6 @@ jQuery(document).ready(function() {
     if (SONGTICKERLI.enableJstore) {
 	    jQuery.jStore.load();
     }
+//##nolibmodestop
 	SONGTICKERLI.main();
 });
