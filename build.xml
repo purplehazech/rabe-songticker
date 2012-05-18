@@ -60,7 +60,7 @@
 				</filterreader>
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Normal"/>
-					<param name="fastDecode" value="true"/>
+					<param name="fastDecode" value="false"/>
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
 				<!--
