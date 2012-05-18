@@ -31,7 +31,6 @@ SONGTICKERLI.lowdelay = 6000;
 SONGTICKERLI.highdelay = 60000;
 SONGTICKERLI.notifydelay = 3000;
 SONGTICKERLI.artist_info = [];
-SONGTICKERLI.firstcolor = true;
 SONGTICKERLI.debug = false;
 /**
  * map where the data should get displayed
@@ -312,16 +311,6 @@ SONGTICKERLI.add_artist = function(artist) {
 		SONGTICKERLI.notify('Es können nur Tracks mit Artist erfasst werden, welcher dem Ticker bekannt sind.');
 	}
 };
-//##nolibmodestop
-SONGTICKERLI.current_track = function() {
-	return {
-		artist:    SONGTICKERLI.artist,
-		title:     SONGTICKERLI.title,
-		message:   SONGTICKERLI.message,
-		starttime: SONGTICKERLI.starttime
-	}
-};
-//##nolibmodestart
 SONGTICKERLI.show = function(choice) {
 	if ($('#songtickerli .scroller').is(':hidden')) {
 		$('#songtickerli .scrollersub').hide();
@@ -529,7 +518,14 @@ if (typeof jQuery.jStore != 'undefined') {
     });
 }
 //##nolibmodestop
-
+SONGTICKERLI.current_track = function() {
+	return {
+		artist:    SONGTICKERLI.artist,
+		title:     SONGTICKERLI.title,
+		message:   SONGTICKERLI.message,
+		starttime: SONGTICKERLI.starttime
+	}
+};
 jQuery(document).ready(function() {
 //##nolibmodestart
     if (SONGTICKERLI.enableConfig) {
