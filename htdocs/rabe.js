@@ -7,6 +7,7 @@
 var SONGTICKERLI = function() {
 	var storageReady = false;
 };
+SONGTICKERLI.tickerurl = 'ticker.php';
 SONGTICKERLI.enableConfig = false;
 SONGTICKERLI.enableTickerInfo = false;
 SONGTICKERLI.enableLoveFeature = false;
@@ -83,7 +84,7 @@ SONGTICKERLI.main = function() {
 	window.setTimeout(function() {
 		$('#songtickerli .network-activity').show();
 		$.ajax({
-			url: '/data/rabe.ch/0.9.1/',
+			url: SONGTICKERLI.tickerUrl,
 			success: function(data) {
 				SONGTICKERLI.artist    = $(data).children('ticker').children('track').children('artist').text();
 				SONGTICKERLI.title     = $(data).children('ticker').children('track').children('title').text();
