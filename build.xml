@@ -334,6 +334,17 @@
 		<exec command="base64 -w 0 work/${file}.png > work/${file}.png.txt"/>
 	</target>
 
+    <target name="build-lib-tarball" depends="stage">
+        <tar destfile="rabe-songticker.tar.gz" compression="gzip" basedir="_site" prefix="songticker">
+            <fileset dir=".">
+                <include name="rabe.js">
+                <include name="jquery.min.js"/>
+                <include name="jquery.json.min.js"/>
+                <include name="demo.html"/>
+            </fileset>
+        </tar>
+    </target>
+
 	<target name="publish" depends="stage">
 		<!-- takes the current checkout and uses the FileSyncTask from my portage overlay 
 		     to publish it to a location defined in build.properties -->
