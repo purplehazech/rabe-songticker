@@ -377,7 +377,12 @@ SONGTICKERLI.notify = function(msg, type) {
 		type = 'warn';
 	}
 	notif = $('<p>'+msg+'</p>').delay(SONGTICKERLI.notifydelay).fadeOut();
-	colorset = SONGTICKERLI.get_colorset(jQuery.jStore.get('color'));
+    if (typeof jQuery.jStore == 'undefined') {
+        color = 'blau';
+    } else {
+        color = jQuery.jStore.get('color');
+    }
+	colorset = SONGTICKERLI.get_colorset(color);
 	notif.css('color', colorset.color);
 	notif.css('background-color', colorset.background);
 
