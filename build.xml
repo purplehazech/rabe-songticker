@@ -163,7 +163,7 @@
 	</target>
 	<target name="jquery-json">
 		<copy todir="work" overwrite="true">
-			<fileset dir="../jquery-json/">
+			<fileset dir="../jquery-json/src">
 				<include name="*.js"/>
 			</fileset>
 			<!--
