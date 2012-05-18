@@ -33,7 +33,7 @@ SONGTICKERLI.debug = false;
  * and in the case of starttime also stored
  * for later comparison
  */
-SONGTICKERLI.targets = {
+SONGTICKERLI.targets = _songtickerli_targets || {
     "show":"#songtickerli .overlay .show",
     "title":"#songtickerli .overlay .title",
     "artist":"#songtickerli .overlay .artist",

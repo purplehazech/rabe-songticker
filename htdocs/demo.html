@@ -1,21 +1,44 @@
 <!doctype HTML!>
 <html>
+<!-- 
+ songticker-lib
+
+ 2010, 2012 - Lucas S. Bickel <hairmare@purplehaze.ch>
+ Alle Rechte vorbehalten
+
+ songtickerli is based on the following projects that are
+ available under the MIT License.
+
+ - jQuery JavaScript Library git
+   http://jquery.com/
+   Copyright 2012, John Resig
+ - jQuery JSON Plugin git
+   Copyright 2011, Timo Tijhof
+   Copyright 2009-2011, Brantley Harris
+   Copyright 2005, Bob Ippolito
+-->
  <head>
 
    <script type="application/javascript" src="jquery.min.js"></script>
    <script type="application/javascript" src="jquery.json.min.js"></script>
+   <script type="application/javascript">
+    var _songtickerli_targets = {
+        "show":"#ticker .show",
+        "title":"#ticker .title",
+        "artist":"#ticker .artist",
+        "starttime": "#ticker .starttime"
+    }
+   </script>
    <script type="application/javascript" src="rabe.js"></script>
-
  </head>
 
  <body>
 
   <div id="songtickerli">
-   <div class="overlay">
     <a class="show"></a><br>
+    <a class="title"></a><br>
     <a class="artist"></a><br>
-    <a class="track"></a><br>
-   </div>
+    <span class="starttime" style="display:hidden"></span>
   </div>
 
  </body>
