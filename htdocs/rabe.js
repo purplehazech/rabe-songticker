@@ -474,37 +474,39 @@ SONGTICKERLI.get_colorset = function(color) {
 	}
 };
 
-jQuery.extend(jQuery.jStore.defaults, {  
-	project: 'songtickerli',
-});
-jQuery.jStore.ready(function(engine){ 
-	jQuery.jStore.CurrentEngine.ready(function() {
-		SONGTICKERLI.storageReady = true;
+if (typeof jQuery.jStore != 'undefined') {
+    jQuery.extend(jQuery.jStore.defaults, {  
+    	project: 'songtickerli',
+    });
+    jQuery.jStore.ready(function(engine){ 
+	    jQuery.jStore.CurrentEngine.ready(function() {
+		    SONGTICKERLI.storageReady = true;
 
-		if (!SONGTICKERLI.configured()) {
-			window.setTimeout(function() {
-				SONGTICKERLI.show($('#songtickerli .scroller-conf'));
-			}, 1600);
-		}
+		    if (!SONGTICKERLI.configured()) {
+			    window.setTimeout(function() {
+				    SONGTICKERLI.show($('#songtickerli .scroller-conf'));
+			    }, 1600);
+		    }
 
-		// init color stuff
-		color = jQuery.jStore.get('color');
-		SONGTICKERLI.switch_color(color);
+		    // init color stuff
+		    color = jQuery.jStore.get('color');
+		    SONGTICKERLI.switch_color(color);
 
-		// radio button
-		$('#songtickerli input[value='+color+']:nth(0)').attr('checked','checked');
+		    // radio button
+	    	$('#songtickerli input[value='+color+']:nth(0)').attr('checked','checked');
 
-		// social networks
-		SONGTICKERLI.observer_jStoreReady();
+	    	// social networks
+		    SONGTICKERLI.observer_jStoreReady();
 
-		// value_maps
-		for (var i = 0; i < SONGTICKERLI.configDataFields.length; i++) {
-			data = SONGTICKERLI.configDataFields[i];
-			$(data.field).val(jQuery.jStore.get(data.name));
-		}
-	});
+		    // value_maps
+		    for (var i = 0; i < SONGTICKERLI.configDataFields.length; i++) {
+			    data = SONGTICKERLI.configDataFields[i];
+			    $(data.field).val(jQuery.jStore.get(data.name));
+		    }
+    	});
 
-});
+    });
+}
 
 jQuery(document).ready(function() {
 
