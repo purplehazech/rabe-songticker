@@ -13,6 +13,8 @@
 		<copy todir="_site" overwrite="true">
 			<fileset dir="work/">
 				<include name="index.html"/>
+				<include name="demo.html"/>
+				<include name="rabe.js"/>
 				<include name="copyright.html"/>
 				<include name="add_artist.html"/>
 				<include name="*.ico"/>
@@ -56,12 +58,12 @@
 					<param name="postfix"       value=".png.txt" />
 					<param name="translatehtml" value="false"/>
 				</filterreader>
-				<!--
 				<filterreader classname="phing.filters.JSPackerFilter">
 					<param name="encoding" value="Numeric"/>
 					<param name="fastDecode" value="true"/>
 					<param name="specialCharacters" value="false"/>
 				</filterreader>
+				<!--
 				-->
 			</filterchain>
 		</copy>
