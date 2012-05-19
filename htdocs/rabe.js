@@ -25,7 +25,6 @@ SONGTICKERLI.observers = [];
 SONGTICKERLI.show = SONGTICKERLI.unknowTitleString;
 SONGTICKERLI.artist = 'songtickerli';
 SONGTICKERLI.title = 'inializing';
-SONGTICKERLI.message = null;
 SONGTICKERLI.starttime = '';
 SONGTICKERLI.delay = 0;
 SONGTICKERLI.lowdelay = 6000;
@@ -104,7 +103,7 @@ SONGTICKERLI.main = function() {
 			},
 			error: function() {
 				SONGTICKERLI.delay = SONGTICKERLI.highdelay;
-				SONGTICKERLI.notify('Keine Internet Verbindung, nächster Versuch in '+SONGTICKERLI.delay/1000/60+' Minuten', 'error');
+				SONGTICKERLI.debug && SONGTICKERLI.notify('Keine Internet Verbindung, nächster Versuch in '+SONGTICKERLI.delay/1000/60+' Minuten', 'error');
 				SONGTICKERLI.main();
 			}
 		});
@@ -132,16 +131,18 @@ SONGTICKERLI.update = function(track) {
         $(SONGTICKERLI.targets.show).html(track.show);
         if (track.showLink) {
             $(SONGTICKERLI.targets.show).attr('href', track.showLink);
+        } else {
+            $(SONGTICKERLI.targets.show).removeAttr('href');
         }
     }
 	if (track.artist) {
-		$(SONGTICKERLI.targets.artists).html(track.artist);
+		$(SONGTICKERLI.targets.artist).html(track.artist);
 		$(SONGTICKERLI.targets.title).html(track.title);
 	} else if (track.message) {
-		$(SONGTICKERLI.targets.artists).html(track.message);
+		$(SONGTICKERLI.targets.artist).html(track.message);
 		$(SONGTICKERLI.targets.title).html(SONGTICKERLI.unknowTitleString);
 	} else {
-		$(SONGTICKERLI.targets.artists).html(track.title);
+		$(SONGTICKERLI.targets.artist).html(track.title);
 		$(SONGTICKERLI.targets.title).html(SONGTICKERLI.unknowTitleString);
 	}
 //##nolibmodestart
@@ -523,12 +524,13 @@ if (typeof jQuery.jStore != 'undefined') {
 //##nolibmodestop
 SONGTICKERLI.current_track = function() {
 	return {
-		artist:    SONGTICKERLI.artist,
-		title:     SONGTICKERLI.title,
-		message:   SONGTICKERLI.message,
-        show:      SONGTICKERLI.show,
-        showLink:  SONGTICKERLI.showLink,
-		starttime: SONGTICKERLI.starttime
+		artist:     SONGTICKERLI.artist,
+		artistLink: SONGTICKERLI.artistLink,
+		title:      SONGTICKERLI.title,
+		titleLink:  SONGTICKERLI.titleLink,
+        show:       SONGTICKERLI.show,
+        showLink:   SONGTICKERLI.showLink,
+		starttime:  SONGTICKERLI.starttime
 	}
 };
 jQuery(document).ready(function() {
