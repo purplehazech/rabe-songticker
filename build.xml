@@ -42,7 +42,6 @@
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.css"/>
-                <include name="ticker.php"/>
 			</fileset>
 			<filterchain>
 				<striplinebreaks/>
@@ -51,6 +50,7 @@
 		<copy todir="work/" overwrite="true">
 			<fileset dir="htdocs/">
 				<include name="*.png"/>
+                <include name="ticker.php"/>
 			</fileset>
 		</copy>
 		<copy todir="work/" overwrite="true">
