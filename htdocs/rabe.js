@@ -92,10 +92,12 @@ SONGTICKERLI.main = function() {
 			url: SONGTICKERLI.tickerUrl,
 			success: function(data) {
 				SONGTICKERLI.artist     = $(data).children('ticker').children('track').children('artist').text();
+				SONGTICKERLI.artistLink = $(data).children('ticker').children('artist').children('link').text();
 				SONGTICKERLI.title      = $(data).children('ticker').children('track').children('title').text();
-				SONGTICKERLI.starttime  = $(data).children('ticker').children('track').children('startTime').text();
+				SONGTICKERLI.titleLink  = $(data).children('ticker').children('track').children('link').text();
 				SONGTICKERLI.show       = $(data).children('ticker').children('show').children('name').text();
 				SONGTICKERLI.showLink   = $(data).children('ticker').children('show').children('link').text();
+				SONGTICKERLI.starttime  = $(data).children('ticker').children('track').children('startTime').text();
 				SONGTICKERLI.delay = SONGTICKERLI.lowdelay;
 				typeof SONGTICKERLI.bleep != 'undefined' && SONGTICKERLI.bleep();
 				SONGTICKERLI.main();
@@ -137,14 +139,20 @@ SONGTICKERLI.update = function(track) {
     }
 	if (track.artist) {
 		$(SONGTICKERLI.targets.artist).html(track.artist);
+        if (track.artistLink) {
+            $(SONGTICKERLI.targets.artist).attr('href', track.artistLink);
+        } else {
+            $(SONGTICKERLI.targets.artist).removeAttr('href');
+        }
+
 		$(SONGTICKERLI.targets.title).html(track.title);
-	} else if (track.message) {
-		$(SONGTICKERLI.targets.artist).html(track.message);
-		$(SONGTICKERLI.targets.title).html(SONGTICKERLI.unknowTitleString);
-	} else {
-		$(SONGTICKERLI.targets.artist).html(track.title);
-		$(SONGTICKERLI.targets.title).html(SONGTICKERLI.unknowTitleString);
-	}
+        if (track.titleLink) {
+            $(SONGTICKERLI.targets.title).attr('href', track.titleLink);
+        } else {
+            $(SONGTICKERLI.targets.title).removeAttr('href');
+        }
+
+    }
 //##nolibmodestart
     if (SONGTICKERLI.enableArtistInfo) {
 	    $('#songtickerli .scroller-info .songtickerli-enter-artistinfo').attr('href', 'javascript:SONGTICKERLI.add_artist(null);');
