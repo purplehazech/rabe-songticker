@@ -8,6 +8,7 @@ var SONGTICKERLI = function() {
 	var storageReady = false;
 };
 SONGTICKERLI.tickerUrl = _songtickerli_url || 'ticker.php';
+SONGTICKERLI.unknowTitleString = 'Radio Bern 95.6 MHz';
 //##nolibmodestart
 SONGTICKERLI.enableConfig = false;
 SONGTICKERLI.enableTickerInfo = false;
@@ -94,7 +95,7 @@ SONGTICKERLI.main = function() {
 				SONGTICKERLI.artist    = $(data).children('ticker').children('track').children('artist').text();
 				SONGTICKERLI.title     = $(data).children('ticker').children('track').children('title').text();
 				SONGTICKERLI.starttime = $(data).children('ticker').children('track').children('startTime').text();
-				SONGTICKERLI.message   = $(data).children('ticker').children('show').children('name').text();
+				SONGTICKERLI.show   = $(data).children('ticker').children('show').children('name').text();
 				SONGTICKERLI.delay = SONGTICKERLI.lowdelay;
 				typeof SONGTICKERLI.bleep != 'undefined' && SONGTICKERLI.bleep();
 				SONGTICKERLI.main();
@@ -134,10 +135,10 @@ SONGTICKERLI.update = function(track) {
 		$(SONGTICKERLI.targets.title).html(track.title);
 	} else if (track.message) {
 		$(SONGTICKERLI.targets.artists).html(track.message);
-		$(SONGTICKERLI.targets.title).html('Radio Bern 95.6 MHz');
+		$(SONGTICKERLI.targets.title).html(SONGTICKERLI.unknowTitleString);
 	} else {
 		$(SONGTICKERLI.targets.artists).html(track.title);
-		$(SONGTICKERLI.targets.title).html('Radio Bern 95.6 MHz');
+		$(SONGTICKERLI.targets.title).html(SONGTICKERLI.unknowTitleString);
 	}
 //##nolibmodestart
     if (SONGTICKERLI.enableArtistInfo) {
@@ -523,6 +524,7 @@ SONGTICKERLI.current_track = function() {
 		artist:    SONGTICKERLI.artist,
 		title:     SONGTICKERLI.title,
 		message:   SONGTICKERLI.message,
+        show:      SONGTICKERLI.show,
 		starttime: SONGTICKERLI.starttime
 	}
 };
