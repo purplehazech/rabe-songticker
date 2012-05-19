@@ -8,7 +8,7 @@ var SONGTICKERLI = function() {
 	var storageReady = false;
 };
 SONGTICKERLI.tickerUrl = _songtickerli_url || 'ticker.php';
-SONGTICKERLI.unknowTitleString = 'Radio Bern 95.6 MHz';
+SONGTICKERLI.unknowTitleString = 'Radio Bern';
 //##nolibmodestart
 SONGTICKERLI.enableConfig = false;
 SONGTICKERLI.enableTickerInfo = false;
@@ -22,7 +22,7 @@ SONGTICKERLI.firstcolor = true;
 //##nolibmodestop
 SONGTICKERLI.scrollerLock = false;
 SONGTICKERLI.observers = [];
-SONGTICKERLI.show = 'Radio Bern 95.6 MHz';
+SONGTICKERLI.show = SONGTICKERLI.unknowTitleString;
 SONGTICKERLI.artist = 'songtickerli';
 SONGTICKERLI.title = 'inializing';
 SONGTICKERLI.message = null;
