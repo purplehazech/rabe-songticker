@@ -1,4 +1,35 @@
 /**
+ songticker-lib
+
+ 2010, 2012 - Lucas S. Bickel <hairmare@purplehaze.ch>
+ Alle Rechte vorbehalten
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published 
+ by the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ songtickerli is based on the following projects that are
+ available under the MIT License.
+
+ - jQuery JavaScript Library git
+   http://jquery.com/
+   Copyright 2012, John Resig
+ - jQuery JSON Plugin git
+   Copyright 2011, Timo Tijhof
+   Copyright 2009-2011, Brantley Harris
+   Copyright 2005, Bob Ippolito
+*/
+/**
+ *
  * basic container function for songtickerli
  *
  * no private vars whatsoever, since i dont plan
