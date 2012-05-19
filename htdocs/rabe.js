@@ -16,17 +16,6 @@
 
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
- songtickerli is based on the following projects that are
- available under the MIT License.
-
- - jQuery JavaScript Library git
-   http://jquery.com/
-   Copyright 2012, John Resig
- - jQuery JSON Plugin git
-   Copyright 2011, Timo Tijhof
-   Copyright 2009-2011, Brantley Harris
-   Copyright 2005, Bob Ippolito
 */
 /**
  *
