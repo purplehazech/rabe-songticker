@@ -92,10 +92,11 @@ SONGTICKERLI.main = function() {
 		$.ajax({
 			url: SONGTICKERLI.tickerUrl,
 			success: function(data) {
-				SONGTICKERLI.artist    = $(data).children('ticker').children('track').children('artist').text();
-				SONGTICKERLI.title     = $(data).children('ticker').children('track').children('title').text();
-				SONGTICKERLI.starttime = $(data).children('ticker').children('track').children('startTime').text();
-				SONGTICKERLI.show   = $(data).children('ticker').children('show').children('name').text();
+				SONGTICKERLI.artist     = $(data).children('ticker').children('track').children('artist').text();
+				SONGTICKERLI.title      = $(data).children('ticker').children('track').children('title').text();
+				SONGTICKERLI.starttime  = $(data).children('ticker').children('track').children('startTime').text();
+				SONGTICKERLI.show       = $(data).children('ticker').children('show').children('name').text();
+				SONGTICKERLI.showLink   = $(data).children('ticker').children('show').children('link').text();
 				SONGTICKERLI.delay = SONGTICKERLI.lowdelay;
 				typeof SONGTICKERLI.bleep != 'undefined' && SONGTICKERLI.bleep();
 				SONGTICKERLI.main();
@@ -129,6 +130,9 @@ SONGTICKERLI.update = function(track) {
 	// load new data
     if (track.show) {
         $(SONGTICKERLI.targets.show).html(track.show);
+        if (track.showLink) {
+            $(SONGTICKERLI.targets.show).attr('href', track.showLink);
+        }
     }
 	if (track.artist) {
 		$(SONGTICKERLI.targets.artists).html(track.artist);
@@ -146,8 +150,6 @@ SONGTICKERLI.update = function(track) {
 	    SONGTICKERLI.update_infodisplay(track);
     }
 //##nolibmodestop
-
-
 
 	$(SONGTICKERLI.targets.starttime).html(SONGTICKERLI.starttime);
 };
@@ -525,6 +527,7 @@ SONGTICKERLI.current_track = function() {
 		title:     SONGTICKERLI.title,
 		message:   SONGTICKERLI.message,
         show:      SONGTICKERLI.show,
+        showLink:  SONGTICKERLI.showLink,
 		starttime: SONGTICKERLI.starttime
 	}
 };
