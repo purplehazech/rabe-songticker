@@ -25,12 +25,13 @@ $ctxt = stream_context_create(
     )
 );
 
-$res = file_get_contents("http://intranet.rabe.ch/songticker/0.9.3/test.php", false, $ctxt);
+$res = file_get_contents("http://intranet.rabe.ch/songticker/0.9.3/current.xml", false, $ctxt);
 foreach ($http_response_header AS $header) {
     if (substr($header, 0, 5) == 'ETag:') {
         $etag = substr($header, 6);
     }
 }
+
 
 header('Content-Type: application/xml');
 header('ETag: '.$etag);
