@@ -211,9 +211,9 @@ SONGTICKERLI.update_history = function() {
 SONGTICKERLI.get_date = function(format) {
 	d = new Date();
 	if (typeof format == 'undefined') {
-		date = d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear()
+		date = d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear();
 	} else if (format == 'class') {
-		date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()
+		date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 	}
 	return date;
 };
@@ -253,7 +253,7 @@ SONGTICKERLI.create_history_day = function() {
 	} else {
 	  $('#songtickerli .history-archive').prepend('<div class="history-day"><div class="scroller-div"><span class="songtickerli-date">'+daystring+'</span></div></div>');
 	}
-	day = $('#songtickerli .history-archive .history-day').first()
+	day = $('#songtickerli .history-archive .history-day').first();
 	day.addClass('history-'+SONGTICKERLI.get_date('class'));
 	day.data('date', daystring);
 	// clone history link
@@ -426,7 +426,7 @@ SONGTICKERLI.bleep = function() {
 	bleeper = $('#songtickerli .bleep');
 	if (SONGTICKERLI.delay = SONGTICKERLI.lowdelay) {
 		bleepdivisor = SONGTICKERLI.delay / 1000;
-		for (i = 0; i <= bleepdivisor; i++) {
+		for (var i = 0; i <= bleepdivisor; i++) {
 			bleeper.delay(SONGTICKERLI.delay/4).fadeIn().delay(SONGTICKERLI.delay/4).fadeOut();
 		}
 	} else {
@@ -449,7 +449,7 @@ SONGTICKERLI.switch_color = function(color) {
 	if (colorset.color != 'gray') {
 		showihelp = false;
 		if (!SONGTICKERLI.configured() && SONGTICKERLI.firstcolor) {
-			showihelp = true
+			showihelp = true;
 		};
 		SONGTICKERLI.firstcolor = false;
 		SONGTICKERLI.set_configured();
@@ -485,31 +485,31 @@ SONGTICKERLI.get_colorset = function(color) {
 			color: 'blue',
 			background: 'rgba(200, 200, 255, 0.5)',
 			logo: 'data:image/png;base64,png_token[[[logo_rabe_blau]]]'
-		}
+		};
 	} else if (color=='gruen') {
 		return {
 			color: 'green',
 			background: 'rgba(200, 255, 200, 0.5)',
 			logo: 'data:image/png;base64,png_token[[[logo_rabe_gruen_weiss]]]'
-		}
+		};
 	} else if (color=='orange') {
 		return {
 			color: 'orange',
 			background: 'rgba(255, 255, 200, 0.5)',
 			logo: 'data:image/png;base64,png_token[[[logo_rabe_orange_weiss]]]'
-		}
+		};
 	} else if (color=='rot') {
 		return {
 			color: 'red',
 			background: 'rgba(255, 200, 200, 0.5)',
 			logo: 'data:image/png;base64,png_token[[[logo_rabe_rot_weiss]]]'
-		}
+		};
 	} else {
 		return {
 			color: 'gray',
 			background: 'rgba(255, 255, 255, 0.5)',
 			logo: 'data:image/png;base64,png_token[[[logo_rabe_mono]]]'
-		}
+		};
 	}
 };
 
@@ -556,7 +556,7 @@ SONGTICKERLI.current_track = function() {
         show:       SONGTICKERLI.show,
         showLink:   SONGTICKERLI.showLink,
 		starttime:  SONGTICKERLI.starttime
-	}
+	};
 };
 jQuery(document).ready(function() {
 //##nolibmodestart
