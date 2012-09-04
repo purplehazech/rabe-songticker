@@ -27,15 +27,16 @@ $ctxt = stream_context_create(
 
 $res = file_get_contents("http://intranet.rabe.ch/songticker/0.9.3/current.xml", false, $ctxt);
 
-if ($http_response_header[0] == 'HTTP/1.1 304 Not Modified') {
-    header($http_response_header[0]);
-    exit();
-}
-
 foreach ($http_response_header AS $header) {
     if (substr($header, 0, 5) == 'ETag:') {
         $etag = substr($header, 6);
     }
+}
+
+if ($http_response_header[0] == 'HTTP/1.1 304 Not Modified') {
+	header($http_response_header[0]);
+	header('ETag: '.$etag);
+	exit();
 }
 
 header('Content-Type: application/xml');
