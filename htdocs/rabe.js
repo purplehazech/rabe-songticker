@@ -165,20 +165,20 @@ SONGTICKERLI.update = function(track) {
     // load new data
     if (track.show) {
         if (track.showLink) {
-            $(SONGTICKERLI.targets.show).html('<a href="'+track.showLink+'">'+track.show+'</a>');
+            $(SONGTICKERLI.targets.show).html('<a href="'+track.showLink+'" target="_top">'+track.show+'</a>');
         } else {
             $(SONGTICKERLI.targets.show).html(track.show);
         }
     }
     if (track.artist) {
         if (track.artistLink) {
-            $(SONGTICKERLI.targets.show).html('<a href="'+track.artistLink+'">'+track.artist+'</a>');
+            $(SONGTICKERLI.targets.show).html('<a href="'+track.artistLink+'" target="_top">'+track.artist+'</a>');
         } else {
             $(SONGTICKERLI.targets.artist).html(track.artist);
         }
 
         if (track.titleLink) {
-            $(SONGTICKERLI.targets.title).html('<a href="'+track.titleLink+'">'+track.title+'</a>');
+            $(SONGTICKERLI.targets.title).html('<a href="'+track.titleLink+'" target="_top">'+track.title+'</a>');
         } else {
             $(SONGTICKERLI.targets.title).html(track.title);
         }
